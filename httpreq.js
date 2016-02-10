@@ -17,6 +17,7 @@ httpreq.p = {
 	user: "",
 	password: "",
 	headers: {},
+	enctype: "multipart/form-data",
 	data: {},
 	resptype: "text",
 	timeout: 0,
@@ -52,7 +53,8 @@ httpreq.err_msg = {
 	"error": "Download error: %s %s",
 	"status_err": "Got bad status %s %s %s",
 	"readyState_err": "%s",
-	"timeout": "Download timeout reached"
+	"timeout": "Download timeout reached",
+	"enctype_err": "Unknown encoding type %s"
 };
 
 httpreq.o = function (p)
@@ -118,6 +120,8 @@ httpreq.o.prototype._set_prms = function (p_in)
 		this.p.cb.u.ontimeout = this.p.cb.d.ontimeout;
 	if ( this.p.cb.u.onloadend == undefined )
 		this.p.cb.u.onloadend = this.p.cb.d.onloadend;
+
+	this.p.data = p_in.data;
 }
 
 httpreq.o.prototype.__set_prms = function (p_in, p_out, p_def)
@@ -368,13 +372,185 @@ httpreq.o.prototype.onfail = function (err_name, err_msg_args)
 		this.p.cb.onfail(err);
 }
 
-httpreq.o.prototype.go = function ()
+httpreq.o.prototype.go = function (data)
 {
+	var reqprms;
+
+
+	if ( data == undefined )
+		data = this.p.data;
+
+	/* May be data is HTMLFormElement. If so, get from it
+	   method, uri and enctype. */
+	this._set_req_prms(data);
+
+	if (( this.p.method.toUpperCase() == "GET" ) ||
+		( this.p.method.toUpperCase() == "HEAD" ) ||
+		( this.p.method.toUpperCase() == "DELETE" ))
+		this._send_data_in_uri(data);
+	else
+		this._send_data_as_payload(data);
+}
+
+httpreq.o.prototype._set_req_prms = function (data)
+{
+	var otype;
+
+
+	otype = Object.prototype.toString.call(data);
+
+	if ( otype == "[object HTMLFormElement]") {
+		this.p.method = data.method;
+		this.p.uri = data.action;
+		this.p.enctype = data.enctype;
+	}
+}
+
+httpreq.o.prototype._send_data_in_uri = function (data)
+{
+	var data_to_send, uri = this.p.uri;
+
+
+	data_to_send = this._fmt_data(data, "application/x-www-form-urlencoded");
+	if ( data_to_send != "" )
+		if ( uri.indexOf("?") == -1 )
+			uri += "?" + data_to_send;
+		else
+			if ( uri.charAt(uri.length - 1) == "&" )
+				uri += data_to_send;
+			else
+				uri += "&" + data_to_send;
+
+	this.r.open(this.p.method, uri, this.p.is_async,
+		this.p.user, this.p.password);
+	this._set_r_headers();
+	this.r.send(null);
+	//this.r.abort();
+	
+}
+
+httpreq.o.prototype._send_data_as_payload = function (data)
+{
+	var data_to_send;
+
+
+	data_to_send = this._fmt_data(data, this.p.enctype);
+
 	this.r.open(this.p.method, this.p.uri, this.p.is_async,
 		this.p.user, this.p.password);
 	this._set_r_headers();
-	this.r.send();
+	this.r.send(data_to_send);
 	//this.r.abort();
+	
+}
+
+/*
+ * Format a data to send accordingly to enctype.
+ * The function has a side effect: set this.p.headers["Content-Type"].
+ */
+httpreq.o.prototype._fmt_data = function (data, enctype)
+{
+	var otype;
+
+
+	if ( data == undefined )
+		return "";
+
+	otype = Object.prototype.toString.call(data);
+
+	switch (otype) {
+		case "[object HTMLFormElement]":
+			return this._fmt_data_form(data, this._get_fmt_funs(enctype));
+		case "[object Object]":
+			return this._fmt_data_obj(data, this._get_fmt_funs(enctype));
+		default:
+			/* If data is Blob, FormData, ArrayBufferView and etc */
+			return data;
+	}
+}
+
+httpreq.o.prototype._get_fmt_funs = function (enctype)
+{
+	if ( this.fmt_funs[enctype] == undefined )
+		return this.onfail("enctype_err", [enctype]);
+	else
+		return this.fmt_funs[enctype];
+}
+
+httpreq.o.prototype._fmt_data_form = function (data, funs)
+{
+	var i, prms = [];
+
+
+	for(i = 0; i < data.length; i++)
+		prms.push(funs.p.call(this, data[i].name, data[i].value));
+
+	return funs.p_join.call(this, prms);
+}
+
+httpreq.o.prototype._fmt_data_obj = function (data, funs)
+{
+	var i, prms = [];
+
+
+	for(i in data)
+		if ( Array.isArray(data[i]) )
+			for(j = 0; j < data[i].length; j++)
+				prms.push(funs.p.call(this, i, data[i][j]));
+		else
+			prms.push(funs.p.call(this, i, data[i]));
+
+	return funs.p_join.call(this, prms);
+}
+
+httpreq.o.prototype.__fmt_prm_urlencoded = function (name, value)
+{
+	return encodeURIComponent(name) + "=" + encodeURIComponent(value);
+}
+
+httpreq.o.prototype.__fmt_prms_urlencoded = function (prms)
+{
+	this.p.headers["Content-Type"] = "application/x-www-form-urlencoded";
+	return prms.join("&");
+}
+
+httpreq.o.prototype.__fmt_prm_plain = function (name, value)
+{
+	return name.replace(/[=\\]/g, "\\$&").replace(/\n/g, "\\n") + "=" +
+		value.replace(/[=\\]/g, "\\$&").replace(/\n/g, "\\n");
+}
+
+httpreq.o.prototype.__fmt_prms_plain = function (prms)
+{
+	this.p.headers["Content-Type"] = "text/plain";
+	return prms.join("\r\n");
+}
+
+httpreq.o.prototype.__fmt_prm_multipart = function (name, value)
+{
+	return "Content-Disposition: form-data; name=\"" +
+		name + "\"\r\n\r\n" + value + "\r\n";
+}
+
+httpreq.o.prototype.__fmt_prms_multipart = function (prms)
+{
+	var boundary, res = "";
+
+
+	boundary = this.__mk_multipart_boundary(prms);
+	res = "--" + boundary;
+	res += prms.join("--" + boundary + "\r\n");
+	res += "--" + boundary + "--\r\n";
+
+	this.p.headers["Content-Type"] = "multipart/form-data; boundary=" +
+		boundary;
+	return res;
+}
+
+httpreq.o.prototype.__mk_multipart_boundary = function (prms)
+{
+	// HERE MUST BE SOMETHING MORE RELIABLE
+	return "---------------------------" + Date.now().toString(16);
 }
 
 httpreq.o.prototype._set_r_headers = function ()
@@ -427,3 +603,19 @@ httpreq.statuserror_toString = function ()
 }
 
 }
+
+/**********************************************************************
+ * Parameters
+ **********************************************************************/
+httpreq.o.prototype.fmt_funs = {
+	"application/x-www-form-urlencoded": {
+		p: httpreq.o.prototype.__fmt_prm_urlencoded,
+		p_join: httpreq.o.prototype.__fmt_prms_urlencoded },
+	"multipart/form-data": {
+		p: httpreq.o.prototype.__fmt_prm_multipart,
+		p_join: httpreq.o.prototype.__fmt_prms_multipart },
+	"text/plain": {
+		p: httpreq.o.prototype.__fmt_prm_plain,
+		p_join: httpreq.o.prototype.__fmt_prms_plain }
+};
+
