@@ -17,7 +17,7 @@ httpreq.p = {
 	user: "",
 	password: "",
 	headers: {},
-	enctype: "multipart/form-data",
+	enctype: "application/x-www-form-urlencoded",
 	data: {},
 	resptype: "text",
 	timeout: 0,
