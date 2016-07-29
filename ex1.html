@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+var busyi; // a busy indicator
+
+function init()
+{
+	busyi = new busy_indicator(document.getElementById("busy_cntr"));
+
+
+	/* default settings */
+	httpreq.p.timeout = 6000;
+	httpreq.p.resptype = "json";
+	/* hide busy indicator on every response or request error.
+	   so, we must not do this ourselves in every onok, onnotok and onfail
+	   callbacks. */
+	httpreq.p.cb.d.onloadend = req_onloadend;
+	/* we must specify ontimeout callback, because on timeout event
+	   loadend callback is not called by XMLHttpRequest */
+	httpreq.p.cb.d.ontimeout = req_ontimeout;
+
+	load_data();
+}
+
+function load_data()
+{
+	busyi.show();
+	httpreq({uri: "/data",
+	         cb: {onok: load_data_onok,
+	              onnotok: load_data_onnotok,
+	              onfail: show_err.bind(this, "Data loading is failed: ")}});
+}
+
+function load_data_onok(data)
+{
+	SOME WORK WITH data
+}
+
+function load_data_onnotok(err)
+{
+	show_err("Error on data loading: ", err);
+}
+
+function show_err(prefix, err)
+{
+	var el = document.getElementById("err_cntr");
+
+
+	el.innerHTML = prefix + err.toString();
+	el.style.display = "block";
+}
+
+function req_onloadend(ev)
+{
+	busyi.hide();
+}
+
+function req_ontimeout(ev)
+{
+	/* Duplicate onloadend callback */
+	busyi.hide();
+	/* Duplicate onfail callback actions, because we specified ontimeout
+	   callback, so onfail callback isn't called on timeout event. */
+	show_err("", new Error("Data loading timed out"));
+}
+</script>
+</head>
+<body onload="init()">
+...
+HERE SOME HTML
+...
+</body>
+</html>

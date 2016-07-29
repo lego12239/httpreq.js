@@ -1,0 +1,119 @@
+httpreq
+=======
+
+httpreq is a javascript library for sending an asynchronous http request with
+help of XMLHttpRequest. The goal of this project is a simple and configurable
+library for ajax.
+
+Using
+=====
+
+To do a request you must call httpreq() with request parameters as it first
+argument. E.g.:
+
+  httpreq({uri: "/get_data",
+           resptype: "json",
+           ok_rex: /2\d\d/,
+           timeout: 6000,
+           cb: {onok: req_ok,
+                onnotok: req_notok,
+                onfail: req_onfail.bind(this, "get_data req fail: ")}});
+
+This call is doing a request to /get_data relative uri and wait a return
+data in json format which is placed in first argument of req_ok() callback
+function. If request is not success(a server respond with a status code not
+satisfied ok_rex regexp), then req_notok() callback function is called with
+an Error object instance as it first argument. If request is fail(a request is
+not reached a server due to client-side abort or error or a response is not
+arrived at specified timeout), then req_onfail() callback function is called
+with an Error ojbect instance as it first argument.
+
+All available parameters and it default values can be seen in httpreq.p
+object. A short parameters description: 
+
+method
+  http method ("GET", "POST", etc)
+uri
+  destination uri
+is_async
+  is request asynchronous or not(true/false)
+user
+  for http basic authentication
+password
+  for http basic authentication
+headers
+  object with http headers name/value pairs
+enctype
+  encoding type for request(supported types can be found at the source bottom)
+data
+  object with request data
+  For GET, HEAD and DELETE methods data is placed in uri in
+  application/x-www-form-urlencoded encoding; for other methods(e.g. PUT and
+  POST) data is placed in payload according to specified enctype.
+resptype
+  a format of a response data that onok callback waits for
+  Accept any values that XMLHttpRequest is supported("text", "json", "document",
+  etc).
+timeout
+  a milliseconds quantity during which a response must be received
+ok_rex
+  regexp to classify a response status code as successful
+cb.u.*
+  upload callbacks(supported by XMLHttpRequest)
+  If you need fine control or progress indicator or something else.
+  All callbacks get an Event object as first argument and this is equal
+  to httpreq.o object.
+  If onabort/onerror/ontimeout callback is specified, then onfail callback
+  isn't called for this event.
+cb.d.*
+  download callbacks(supported by XMLHttpRequest)
+  If you need fine control or progress indicator or something else.
+  All callbacks get an Event object as first argument and this is equal
+  to httpreq.o object.
+  If onabort/onerror/ontimeout callback is specified, then onfail callback
+  isn't called for this event.
+cb.onok
+  a callback for successful response
+  This callback is called if a response is received and response status code
+  is satisfied ok_rex regexp.
+  The callback get data in specified resptype format as first argument.
+cb.onnotok
+  a callback for unsuccessful response
+  This callback is called if a response is received and response status code
+  is not satisfied ok_rex regexp.
+  The callback get Error object as first argument.
+cb.onfail
+  a callback for request fail
+  This callback is called if a request is failed(due to client-side abort or
+  error; or timeout)
+  The callback get Error object as first argument.
+debug
+  debug level(now support only 2 values: 0 or 1)
+  Log to console a debug info about request stage and progress.
+
+If some values aren't specified in httpreq() call, httpreq use default values
+from httpreq.p object. So, we can omit ok_rex parameter from previous example:
+
+  httpreq({uri: "/get_data",
+           resptype: "json",
+           timeout: 6000,
+           cb: {onok: req_ok,
+                onnotok: req_notok,
+                onfail: req_onfail.bind(this, "get_data req fail: ")}});
+
+Moreover, we can set default value for timeout and for resptype(if our
+application always wait a json format):
+
+  httpreq.p.timeout = 6000;
+  httpreq.p.resptype = "json";
+
+  httpreq({uri: "/get_data",
+           cb: {onok: req_ok,
+                onnotok: req_notok,
+                onfail: req_onfail.bind(this, "get_data req fail: ")}});
+
+Now, our httpreq() call has parameters specific only for current request.
+
+Also, some error messages can be modified - look at httpreq.err_msg object.
+
+For other info see examples and the source file.
