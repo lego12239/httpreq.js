@@ -511,11 +511,13 @@ httpreq.o.prototype._fmt_data_obj = function (data, funs)
 
 
 	for(i in data)
-		if ( Array.isArray(data[i]) )
+		if ( Array.isArray(data[i]) ) {
 			for(j = 0; j < data[i].length; j++)
-				prms.push(funs.p.call(this, i, data[i][j]));
-		else
-			prms.push(funs.p.call(this, i, data[i]));
+				if (data[i][j] != null)
+					prms.push(funs.p.call(this, i, data[i][j]));
+		} else
+			if (data[i] != null)
+				prms.push(funs.p.call(this, i, data[i]));
 
 	return funs.p_join.call(this, prms);
 }
