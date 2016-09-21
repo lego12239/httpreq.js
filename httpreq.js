@@ -103,9 +103,6 @@ httpreq.o = function (p)
 	this.r.onprogress = this.onprogress.bind(this);
 	this.r.ontimeout = this.ontimeout.bind(this);
 	this.r.onloadend = this.onloadend.bind(this);
-
-	this.r.timeout = this.p.timeout;
-	this.r.responseType = this.p.resptype;
 }
 
 httpreq.o.prototype._set_prms = function (p_in)
@@ -440,6 +437,8 @@ httpreq.o.prototype._send_data_in_uri = function (data)
 
 	this.r.open(this.p.method, uri, this.p.is_async,
 		this.p.user, this.p.password);
+	this.r.responseType = this.p.resptype;
+	this.r.timeout = this.p.timeout;
 	this._set_r_headers();
 	this.r.send(null);
 	//this.r.abort();
@@ -455,6 +454,8 @@ httpreq.o.prototype._send_data_as_payload = function (data)
 
 	this.r.open(this.p.method, this.p.uri, this.p.is_async,
 		this.p.user, this.p.password);
+	this.r.responseType = this.p.resptype;
+	this.r.timeout = this.p.timeout;
 	this._set_r_headers();
 	this.r.send(data_to_send);
 	//this.r.abort();
