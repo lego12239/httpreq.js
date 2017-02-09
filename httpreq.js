@@ -40,25 +40,23 @@ httpreq.p = {
 	timeout: 0,
 	ok_rex: /2\d\d/,
 	cb: {
-		u: {
-			onabort: undefined,
-			onerror: undefined,
-			onload: undefined,
-			onloadstart: undefined,
-			onprogress: undefined,
-			ontimeout: undefined,
-			onloadend: undefined},
-		d: {
-			onabort: undefined,
-			onerror: undefined,
-			onload: undefined,
-			onloadstart: undefined,
-			onprogress: undefined,
-			ontimeout: undefined,
-			onloadend: undefined},
-		onok: undefined,
-		onnotok: undefined,
-		onfail: undefined},
+		_onok: undefined,
+		_onnotok: undefined,
+		_onfail: undefined,
+		u_onabort: undefined,
+		u_onerror: undefined,
+		u_ontimeout: undefined,
+		u_onload: undefined,
+		u_onloadstart: undefined,
+		u_onprogress: undefined,
+		u_onloadend: undefined,
+		onabort: undefined,
+		onerror: undefined,
+		ontimeout: undefined,
+		onload: undefined,
+		onloadstart: undefined,
+		onprogress: undefined,
+		onloadend: undefined},
 	debug: 0
 };
 
@@ -119,22 +117,6 @@ httpreq.o.prototype._set_prms = function (p_in)
 		this.f.json = 1;
 	}
 
-	/* Use by default download event handlers also for upload events */
-	if ( this.p.cb.u.onabort == undefined )
-		this.p.cb.u.onabort = this.p.cb.d.onabort;
-	if ( this.p.cb.u.onerror == undefined )
-		this.p.cb.u.onerror = this.p.cb.d.onerror;
-	if ( this.p.cb.u.onload == undefined )
-		this.p.cb.u.onload = this.p.cb.d.onload;
-	if ( this.p.cb.u.onloadstart == undefined )
-		this.p.cb.u.onloadstart = this.p.cb.d.onloadstart;
-	if ( this.p.cb.u.onprogress == undefined )
-		this.p.cb.u.onprogress = this.p.cb.d.onprogress;
-	if ( this.p.cb.u.ontimeout == undefined )
-		this.p.cb.u.ontimeout = this.p.cb.d.ontimeout;
-	if ( this.p.cb.u.onloadend == undefined )
-		this.p.cb.u.onloadend = this.p.cb.d.onloadend;
-
 	this.p.data = p_in.data;
 }
 
@@ -176,8 +158,8 @@ httpreq.o.prototype.u_onabort = function (ev)
 	this._dbg_out("u_onabort()", ev);
 
 
-	if ( this.p.cb.u.onabort != undefined )
-		return this.p.cb.u.onabort(this, ev);
+	if ( this.p.cb.u_onabort != undefined )
+		return this.p.cb.u_onabort(this, ev);
 
 	this.onfail("u_abort");
 }
@@ -187,8 +169,8 @@ httpreq.o.prototype.u_onerror = function (ev)
 	this._dbg_out("u_onerror(): " + this.r.status + ": " + this.r.statusText,
 		ev);
 
-	if ( this.p.cb.u.onerror != undefined )
-		return this.p.cb.u.onerror(this, ev);
+	if ( this.p.cb.u_onerror != undefined )
+		return this.p.cb.u_onerror(this, ev);
 
 	this.onfail("u_error", [this.r.status, this.r.statusText]);
 }
@@ -197,8 +179,8 @@ httpreq.o.prototype.u_onload = function (ev)
 {
 	this._dbg_out("u_onload()", ev);
 
-	if ( this.p.cb.u.onload != undefined )
-		return this.p.cb.u.onload(this, ev);
+	if ( this.p.cb.u_onload != undefined )
+		return this.p.cb.u_onload(this, ev);
 
 	/* WHAT IS MUST BE HERE? */
 
@@ -208,8 +190,8 @@ httpreq.o.prototype.u_onloadstart = function (ev)
 {
 	this._dbg_out("u_onloadstart()", ev);
 
-	if ( this.p.cb.u.onloadstart != undefined )
-		return this.p.cb.u.onloadstart(this, ev);
+	if ( this.p.cb.u_onloadstart != undefined )
+		return this.p.cb.u_onloadstart(this, ev);
 }
 
 httpreq.o.prototype.u_onprogress = function (ev)
@@ -221,16 +203,16 @@ httpreq.o.prototype.u_onprogress = function (ev)
 
 	this._dbg_out("u_onprogress()", ev);
 
-	if ( this.p.cb.u.onprogress != undefined )
-		return this.p.cb.u.onprogress(this, ev);
+	if ( this.p.cb.u_onprogress != undefined )
+		return this.p.cb.u_onprogress(this, ev);
 }
 
 httpreq.o.prototype.u_ontimeout = function (ev)
 {
 	this._dbg_out("u_ontimeout()", ev);
 
-	if ( this.p.cb.u.ontimeout != undefined )
-		return this.p.cb.u.ontimeout(this, ev);
+	if ( this.p.cb.u_ontimeout != undefined )
+		return this.p.cb.u_ontimeout(this, ev);
 
 	this.onfail("u_timeout");
 }
@@ -239,8 +221,8 @@ httpreq.o.prototype.u_onloadend = function (ev)
 {
 	this._dbg_out("u_onloadend()", ev);
 
-	if ( this.p.cb.u.onloadend != undefined )
-		return this.p.cb.u.onloadend(this, ev);
+	if ( this.p.cb.u_onloadend != undefined )
+		return this.p.cb.u_onloadend(this, ev);
 }
 
 httpreq.o.prototype.onabort = function (ev)
@@ -248,8 +230,8 @@ httpreq.o.prototype.onabort = function (ev)
 	this._dbg_out("onabort()", ev);
 
 
-	if ( this.p.cb.d.onabort != undefined )
-		return this.p.cb.d.onabort(this, ev);
+	if ( this.p.cb.onabort != undefined )
+		return this.p.cb.onabort(this, ev);
 
 	this.onfail("abort");
 }
@@ -259,8 +241,8 @@ httpreq.o.prototype.onerror = function (ev)
 	this._dbg_out("onerror(): " + this.r.status + ": " + this.r.statusText,
 		ev);
 
-	if ( this.p.cb.d.onerror != undefined )
-		return this.p.cb.d.onerror(this, ev);
+	if ( this.p.cb.onerror != undefined )
+		return this.p.cb.onerror(this, ev);
 
 	this.onfail("error", [this.r.status, this.r.statusText]);
 }
@@ -272,8 +254,8 @@ httpreq.o.prototype.onload = function (ev)
 
 	this._dbg_out("onload()", ev);
 
-	if ( this.p.cb.d.onload != undefined )
-		return this.p.cb.d.onload(this, ev);
+	if ( this.p.cb.onload != undefined )
+		return this.p.cb.onload(this, ev);
 
 	if ( this.r.readyState == 4 ) {
 		if ( this.p.ok_rex.test(this.r.status) ) {
@@ -288,8 +270,8 @@ httpreq.o.prototype.onloadstart = function (ev)
 {
 	this._dbg_out("onloadstart(): ", ev);
 
-	if ( this.p.cb.d.onloadstart != undefined )
-		return this.p.cb.d.onloadstart(this, ev);
+	if ( this.p.cb.onloadstart != undefined )
+		return this.p.cb.onloadstart(this, ev);
 }
 
 httpreq.o.prototype.onprogress = function (ev)
@@ -301,16 +283,16 @@ httpreq.o.prototype.onprogress = function (ev)
 
 	this._dbg_out("onprogress()", ev);
 
-	if ( this.p.cb.d.onprogress != undefined )
-		return this.p.cb.d.onprogress(this, ev);
+	if ( this.p.cb.onprogress != undefined )
+		return this.p.cb.onprogress(this, ev);
 }
 
 httpreq.o.prototype.ontimeout = function (ev)
 {
 	this._dbg_out("ontimeout()", ev);
 
-	if ( this.p.cb.d.ontimeout != undefined )
-		return this.p.cb.d.ontimeout(this, ev);
+	if ( this.p.cb.ontimeout != undefined )
+		return this.p.cb.ontimeout(this, ev);
 
 	this.onfail("timeout");
 }
@@ -319,8 +301,8 @@ httpreq.o.prototype.onloadend = function (ev)
 {
 	this._dbg_out("onloadend()", ev);
 
-	if ( this.p.cb.d.onloadend != undefined )
-		return this.p.cb.d.onloadend(this, ev);
+	if ( this.p.cb.onloadend != undefined )
+		return this.p.cb.onloadend(this, ev);
 }
 
 httpreq.o.prototype.onok = function ()
