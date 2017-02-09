@@ -118,6 +118,8 @@ httpreq.o.prototype._set_prms = function (p_in)
 	}
 
 	this.p.data = p_in.data;
+	
+	this._check_misspelled(p_in, this.p, "");
 }
 
 httpreq.o.prototype.__set_prms = function (p_in, p_out, p_def)
@@ -142,6 +144,22 @@ httpreq.o.prototype._set_prm = function (n, v, p_out, p_def)
 		v = p_def[n];
 
 	p_out[n] = v;
+}
+
+httpreq.o.prototype._check_misspelled = function (p_in, p_ex, parent)
+{
+	var p, ret;
+
+
+	if ( p_in == undefined )
+		p_in = {};
+
+	for(p in p_in) {
+		if (!p_ex.hasOwnProperty(p))
+			throw("httpreq: unknown parameter name '" + parent + p + "'");
+		if (Object.prototype.toString.call(p_in[p]) == "[object Object]" )
+			this._check_misspelled(p_in[p], p_ex[p], parent + p + ".");
+	}
 }
 
 httpreq.o.prototype._set_headers = function (headers)
