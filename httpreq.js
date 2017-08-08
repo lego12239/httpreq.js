@@ -178,8 +178,6 @@ httpreq.o.prototype.u_onabort = function (ev)
 
 	if ( this.p.cb.u_onabort != undefined )
 		return this.p.cb.u_onabort(ev);
-
-	this.onfail("u_abort");
 }
 
 httpreq.o.prototype.u_onerror = function (ev)
@@ -189,8 +187,6 @@ httpreq.o.prototype.u_onerror = function (ev)
 
 	if ( this.p.cb.u_onerror != undefined )
 		return this.p.cb.u_onerror(ev);
-
-	this.onfail("u_error", [this.r.status, this.r.statusText]);
 }
 
 httpreq.o.prototype.u_onload = function (ev)
@@ -231,8 +227,6 @@ httpreq.o.prototype.u_ontimeout = function (ev)
 
 	if ( this.p.cb.u_ontimeout != undefined )
 		return this.p.cb.u_ontimeout(ev);
-
-	this.onfail("u_timeout");
 }
 
 httpreq.o.prototype.u_onloadend = function (ev)
