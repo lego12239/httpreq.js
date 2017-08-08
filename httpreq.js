@@ -328,12 +328,12 @@ httpreq.o.prototype.onok = function ()
 	var data;
 
 
-	if ( this.p.cb.onok == undefined )
+	if ( this.p.cb._onok == undefined )
 		return;
 
 	data = this.f.json ? JSON.parse(this.r.responseText) : this.r.response;
 
-	return this.p.cb.onok(data);
+	return this.p.cb._onok(data);
 }
 
 httpreq.o.prototype.onnotok = function ()
@@ -360,8 +360,8 @@ httpreq.o.prototype.onnotok = function ()
 
 	console.error("httpreq: " + err);
 
-	if ( this.p.cb.onnotok != undefined )
-		this.p.cb.onnotok(err);
+	if ( this.p.cb._onnotok != undefined )
+		this.p.cb._onnotok(err);
 }
 
 httpreq.o.prototype.onfail = function (err_name, err_msg_args)
@@ -382,8 +382,8 @@ httpreq.o.prototype.onfail = function (err_name, err_msg_args)
 
 	console.error("httpreq: " + err);
 
-	if ( this.p.cb.onfail != undefined )
-		this.p.cb.onfail(err);
+	if ( this.p.cb._onfail != undefined )
+		this.p.cb._onfail(err);
 }
 
 httpreq.o.prototype.go = function (data)
