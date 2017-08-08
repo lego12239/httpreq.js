@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>httpreq tests</title>
+<script type="text/javascript" src="httpreq.js">
+</script>
+<script type="text/javascript">
+	var counters = {_run: 0, _passed: 0, _failed: 0, priv: {}};
+	Object.defineProperty(counters, "run", {
+		get: function () { return counters._run; },
+		set: function () { counters._run++; counters_show(); }});
+	Object.defineProperty(counters, "passed", {
+		get: function () { return counters._passed; },
+		set: function () { counters._passed++; counters_show(); }});
+	Object.defineProperty(counters, "failed", {
+		get: function () { return counters._failed; },
+		set: function () { counters._failed++; counters_show(); }});
+	var test_idx = -1;
+	var span_ok, span_fail, res_cntr_el;
+	var tests = [
+		{
+			id: "unit0",
+			title: "Test wrong parameter names in constructor",
+			fun: test_wrong_prms},
+		{
+			id: "unit1",
+			title: "Test GET onloadstart",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_onloadstart},
+		{
+			id: "unit2",
+			title: "Test HEAD onloadstart",
+			method: 'HEAD',
+			uri: '/test/head',
+			fun: test_onloadstart},
+		{
+			id: "unit3",
+			title: "Test POST onloadstart",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_onloadstart},
+		{
+			id: "unit4",
+			title: "Test PUT onloadstart",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_onloadstart},
+		{
+			id: "unit5",
+			title: "Test DELETE onloadstart",
+			method: 'DELETE',
+			uri: '/test/delete',
+			fun: test_onloadstart},
+		{
+			id: "unit6",
+			title: "Test GET onprogress",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_onprogress},
+		{
+			id: "unit7",
+			title: "Test POST onprogress",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_onprogress},
+		{
+			id: "unit8",
+			title: "Test PUT onprogress",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_onprogress},
+		{
+			id: "unit9",
+			title: "Test DELETE onprogress",
+			method: 'DELETE',
+			uri: '/test/delete',
+			fun: test_onprogress},
+		{
+			id: "unit10",
+			title: "Test GET onload",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_onload},
+		{
+			id: "unit11",
+			title: "Test HEAD onload",
+			method: 'HEAD',
+			uri: '/test/head',
+			fun: test_onload},
+		{
+			id: "unit12",
+			title: "Test POST onload",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_onload},
+		{
+			id: "unit13",
+			title: "Test PUT onload",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_onload},
+		{
+			id: "unit14",
+			title: "Test DELETE onload",
+			method: 'DELETE',
+			uri: '/test/delete',
+			fun: test_onload},
+		{
+			id: "unit15",
+			title: "Test GET onloadend",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_onloadend},
+		{
+			id: "unit16",
+			title: "Test HEAD onloadend",
+			method: 'HEAD',
+			uri: '/test/head',
+			fun: test_onloadend},
+		{
+			id: "unit17",
+			title: "Test POST onloadend",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_onloadend},
+		{
+			id: "unit18",
+			title: "Test PUT onloadend",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_onloadend},
+		{
+			id: "unit19",
+			title: "Test DELETE onloadend",
+			method: 'DELETE',
+			uri: '/test/delete',
+			fun: test_onloadend},
+		{
+			id: "unit20",
+			title: "Test POST u_onloadstart",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_u_onloadstart},
+		{
+			id: "unit21",
+			title: "Test PUT u_onloadstart",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_u_onloadstart},
+		{
+			id: "unit22",
+			title: "Test POST u_onprogress",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_u_onprogress},
+		{
+			id: "unit23",
+			title: "Test PUT u_onprogress",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_u_onprogress},
+		{
+			id: "unit24",
+			title: "Test POST u_onload",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_u_onload},
+		{
+			id: "unit25",
+			title: "Test PUT u_onload",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_u_onload},
+		{
+			id: "unit26",
+			title: "Test POST u_onloadend",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_u_onloadend},
+		{
+			id: "unit27",
+			title: "Test PUT u_onloadend",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_u_onloadend},
+		{
+			id: "unit28",
+			title: "Test GET ontimeout",
+			method: 'GET',
+			uri: '/test/get_timeout',
+			fun: test_ontimeout},
+		{
+			id: "unit29",
+			title: "Test HEAD ontimeout",
+			method: 'HEAD',
+			uri: '/test/head_timeout',
+			fun: test_ontimeout},
+		{
+			id: "unit30",
+			title: "Test POST ontimeout",
+			method: 'POST',
+			uri: '/test/post_timeout',
+			fun: test_ontimeout},
+		{
+			id: "unit31",
+			title: "Test PUT ontimeout",
+			method: 'PUT',
+			uri: '/test/put_timeout',
+			fun: test_ontimeout},
+		{
+			id: "unit32",
+			title: "Test DELETE ontimeout",
+			method: 'DELETE',
+			uri: '/test/delete_timeout',
+			fun: test_ontimeout},
+		{
+			id: "unit33",
+			title: "Test GET onloadend timeout",
+			method: 'GET',
+			uri: '/test/get_timeout',
+			fun: test_onloadend_timeout},
+		{
+			id: "unit34",
+			title: "Test HEAD onloadend timeout",
+			method: 'HEAD',
+			uri: '/test/head_timeout',
+			fun: test_onloadend_timeout},
+		{
+			id: "unit35",
+			title: "Test POST onloadend timeout",
+			method: 'POST',
+			uri: '/test/post_timeout',
+			fun: test_onloadend_timeout},
+		{
+			id: "unit36",
+			title: "Test PUT onloadend timeout",
+			method: 'PUT',
+			uri: '/test/put_timeout',
+			fun: test_onloadend_timeout},
+		{
+			id: "unit37",
+			title: "Test DELETE onloadend timeout",
+			method: 'DELETE',
+			uri: '/test/delete_timeout',
+			fun: test_onloadend_timeout},
+		{
+			id: "unit38",
+			title: "Test GET onloadend on abort in onloadstart",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_onloadend_abort_in_onloadstart},
+		{
+			id: "unit39",
+			title: "Test HEAD onloadend on abort in onloadstart",
+			method: 'HEAD',
+			uri: '/test/head',
+			fun: test_onloadend_abort_in_onloadstart},
+		{
+			id: "unit40",
+			title: "Test POST onloadend on abort in onloadstart",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_onloadend_abort_in_onloadstart},
+		{
+			id: "unit41",
+			title: "Test PUT onloadend on abort in onloadstart",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_onloadend_abort_in_onloadstart},
+		{
+			id: "unit42",
+			title: "Test DELETE onloadend on abort in onloadstart",
+			method: 'DELETE',
+			uri: '/test/delete',
+			fun: test_onloadend_abort_in_onloadstart},
+		{
+			id: "unit43",
+			title: "Test GET onloadend on abort in onprogress",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_onloadend_abort_in_onprogress},
+		{
+			id: "unit44",
+			title: "Test POST onloadend on abort in onprogress",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_onloadend_abort_in_onprogress},
+		{
+			id: "unit45",
+			title: "Test PUT onloadend on abort in onprogress",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_onloadend_abort_in_onprogress},
+		{
+			id: "unit46",
+			title: "Test DELETE onloadend on abort in onprogress",
+			method: 'DELETE',
+			uri: '/test/delete',
+			fun: test_onloadend_abort_in_onprogress},
+		{
+			id: "unit47",
+			title: "Test GET onload data(200 ok)",
+			method: 'GET',
+			uri: '/test/get',
+			err_code: 200,
+			err_name: "ok",
+			fun: test_onload_data},
+		{
+			id: "unit48",
+			title: "Test HEAD onload data(200 ok)",
+			method: 'HEAD',
+			uri: '/test/head',
+			err_code: 200,
+			err_name: "ok",
+			fun: test_onload_data},
+		{
+			id: "unit49",
+			title: "Test POST onload data(200 ok)",
+			method: 'POST',
+			uri: '/test/post',
+			err_code: 200,
+			err_name: "ok",
+			fun: test_onload_data},
+		{
+			id: "unit50",
+			title: "Test PUT onload data(200 ok)",
+			method: 'PUT',
+			uri: '/test/put',
+			err_code: 200,
+			err_name: "ok",
+			fun: test_onload_data},
+		{
+			id: "unit51",
+			title: "Test DELETE onload data(200 ok)",
+			method: 'DELETE',
+			uri: '/test/delete',
+			err_code: 200,
+			err_name: "ok",
+			fun: test_onload_data},
+		{
+			id: "unit52",
+			title: "Test GET onload data(400 some_err)",
+			method: 'GET',
+			uri: '/test/get_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onload_data},
+		{
+			id: "unit53",
+			title: "Test HEAD onload data(400 some_err)",
+			method: 'HEAD',
+			uri: '/test/head_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onload_data},
+		{
+			id: "unit54",
+			title: "Test POST onload data(400 some_err)",
+			method: 'POST',
+			uri: '/test/post_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onload_data},
+		{
+			id: "unit55",
+			title: "Test PUT onload data(400 some_err)",
+			method: 'PUT',
+			uri: '/test/put_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onload_data},
+		{
+			id: "unit56",
+			title: "Test DELETE onload data(400 some_err)",
+			method: 'DELETE',
+			uri: '/test/delete_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onload_data},
+		{
+			id: "unit57",
+			title: "Test GET _onok data(200 ok)",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_onok_data},
+		{
+			id: "unit58",
+			title: "Test HEAD _onok data(200 ok)",
+			method: 'HEAD',
+			uri: '/test/head',
+			fun: test_onok_data},
+		{
+			id: "unit59",
+			title: "Test POST _onok data(200 ok)",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_onok_data},
+		{
+			id: "unit60",
+			title: "Test PUT _onok data(200 ok)",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_onok_data},
+		{
+			id: "unit61",
+			title: "Test DELETE _onok data(200 ok)",
+			method: 'DELETE',
+			uri: '/test/delete',
+			fun: test_onok_data},
+		{
+			id: "unit62",
+			title: "Test GET _onnotok data(400 some_err)",
+			method: 'GET',
+			uri: '/test/get_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onnotok_data},
+		{
+			id: "unit63",
+			title: "Test HEAD _onnotok data(400 some_err)",
+			method: 'HEAD',
+			uri: '/test/head_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onnotok_data},
+		{
+			id: "unit64",
+			title: "Test POST _onnotok data(400 some_err)",
+			method: 'POST',
+			uri: '/test/post_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onnotok_data},
+		{
+			id: "unit65",
+			title: "Test PUT _onnotok data(400 some_err)",
+			method: 'PUT',
+			uri: '/test/put_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onnotok_data},
+		{
+			id: "unit66",
+			title: "Test DELETE _onnotok data(400 some_err)",
+			method: 'DELETE',
+			uri: '/test/delete_err',
+			err_code: 400,
+			err_name: "some_err",
+			fun: test_onnotok_data},
+		{
+			id: "unit67",
+			title: "Test GET _onfail data(timeout)",
+			method: 'GET',
+			uri: '/test/get_timeout',
+			fun: test_onfail_data},
+		{
+			id: "unit68",
+			title: "Test HEAD _onfail data(timeout)",
+			method: 'HEAD',
+			uri: '/test/head_timeout',
+			fun: test_onfail_data},
+		{
+			id: "unit69",
+			title: "Test POST _onfail data(timeout)",
+			method: 'POST',
+			uri: '/test/post_timeout',
+			fun: test_onfail_data},
+		{
+			id: "unit70",
+			title: "Test PUT _onfail data(timeout)",
+			method: 'PUT',
+			uri: '/test/put_timeout',
+			fun: test_onfail_data},
+		{
+			id: "unit71",
+			title: "Test DELETE _onfail data(timeout)",
+			method: 'DELETE',
+			uri: '/test/delete_timeout',
+			fun: test_onfail_data}];
+	
+	function do_tests()
+	{
+		var i;
+		
+		span_ok = document.querySelector(".results_ok");
+		span_fail = document.querySelector(".results_fail");
+		res_cntr_el = document.getElementById("results");
+
+		counters_show();
+		
+		//tid = setInterval(do_test, 100);
+		do_next_test();
+	}
+	function do_next_test()
+	{
+		if (test_idx == (tests.length-1))
+			return;
+		test_idx++;
+		report_testname(tests[test_idx]);
+		tests[test_idx].fun(tests[test_idx]);
+		counters.run++;
+	}
+	function counters_show()
+	{
+		document.getElementById("counter").innerHTML = counters.run + "/" +
+		counters.passed + "/" + counters.failed + "/" + tests.length;
+	}
+	function report_testname(test)
+	{
+		var el, span;
+
+		el = document.createElement("div");
+		el.id = test.id;
+		span = document.createElement("span");
+		span.innerHTML = "test '" + test.id + "' (" + test.title + "): ";
+		el.appendChild(span);
+		res_cntr_el.appendChild(el);
+	}
+	function report_ok(test)
+	{
+		var el;
+
+		el = document.getElementById(test.id);
+		el.appendChild(span_ok.cloneNode(true));
+		counters.passed++;
+		if (test.id == tests[test_idx].id)
+			do_next_test();
+	}
+
+	function report_fail(test)
+	{
+		var el;
+
+		el = document.getElementById(test.id);
+		el.appendChild(span_fail.cloneNode(true));
+		counters.failed++;
+		if (test.id == tests[test_idx].id)
+			do_next_test();
+	}
+	function test_wrong_prms(test)
+	{
+		if (!_test_wrong_prms1())
+			return report_fail(test);
+		if (!_test_wrong_prms2())
+			return report_fail(test);
+		report_ok(test);
+	}
+	function _test_wrong_prms1()
+	{
+		try {
+			httpreq({
+				urii: "/uri"});
+		} catch (ex) {
+			if (ex == "httpreq: unknown parameter name 'urii'")
+				return 1;
+		}
+		return 0;
+	}
+	function _test_wrong_prms2()
+	{
+		try {
+			httpreq({
+				uri: "/uri",
+				cb: {
+					u: {
+						onabort: function () {true;}}}});
+		} catch (ex) {
+			if (ex == "httpreq: unknown parameter name 'cb.u'")
+				return 1;
+		}
+		return 0;
+	}
+	function test_onloadstart(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			cb: {
+				onloadstart: report_ok.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test)}});
+	}
+	function test_onprogress(test)
+	{
+		counters.priv[test.id] = 1;
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			cb: {
+				onprogress: test_onprogress_onprogress.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test)}});
+	}
+	function test_onprogress_onprogress(test)
+	{
+		if (--counters.priv[test.id] == 0)
+			report_ok(test);
+	}
+	function test_onload(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			cb: {
+				onload: report_ok.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test)}});
+	}
+	function test_onloadend(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			cb: {
+				onloadend: report_ok.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test)}});
+	}
+	function test_u_onloadstart(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			data: "some data",
+			cb: {
+				u_onloadstart: report_ok.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test)}});
+	}
+	function test_u_onprogress(test)
+	{
+		counters.priv[test.id] = 1;
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			data: "some data",
+			cb: {
+				u_onprogress: test_u_onprogress_onprogress.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test)}});
+	}
+	function test_u_onprogress_onprogress(test)
+	{
+		if (--counters.priv[test.id] == 0)
+			report_ok(test);
+	}
+	function test_u_onload(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			data: "some data",
+			cb: {
+				u_onload: report_ok.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test)}});
+	}
+	function test_u_onloadend(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			data: "some data",
+			cb: {
+				u_onloadend: report_ok.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test)}});
+	}
+	function test_ontimeout(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			timeout: 1000,
+			cb: {
+				ontimeout: report_ok.bind(this, test),
+				onload: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test)}});
+	}
+	function test_onloadend_timeout(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			timeout: 1000,
+			cb: {
+				onloadend: report_ok.bind(this, test),
+				onload: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test)}});
+	}
+	function test_onloadend_abort_in_onloadstart(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			cb: {
+				onloadend: report_ok.bind(this, test),
+				onloadstart: test_onloadend_abort_in_onloadstart_onloadstart,
+				onload: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test)}});
+	}
+	function test_onloadend_abort_in_onloadstart_onloadstart(ev)
+	{
+		ev.target.abort();
+	}
+	function test_onloadend_abort_in_onprogress(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			cb: {
+				onloadend: report_ok.bind(this, test),
+				onprogress: test_onloadend_abort_in_onprogress_onprogress,
+				onload: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test)}});
+	}
+	function test_onloadend_abort_in_onprogress_onprogress(ev)
+	{
+		ev.target.abort();
+	}
+	function test_onload_data(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			cb: {
+				onload: test_onload_data_onload.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test)}});
+	}
+	function test_onload_data_onload(test, ev)
+	{
+		var xhr = ev.target;
+		
+		if ((xhr.status != test.err_code) ||
+		    (xhr.statusText != test.err_name) ||
+		    (xhr.responseType != "text"))
+			return report_fail(test);
+		
+		if ((test.method == 'GET') &&
+		    (xhr.response == "get_resp"))
+			return report_ok(test);
+		if ((test.method == 'HEAD') &&
+		    (xhr.response == ""))
+			return report_ok(test);
+		if ((test.method == 'POST') &&
+		    (xhr.response == "post_resp"))
+			return report_ok(test);
+		if ((test.method == 'PUT') &&
+		    (xhr.response == "put_resp"))
+			return report_ok(test);
+		if ((test.method == 'DELETE') &&
+		    (xhr.response == "delete_resp"))
+			return report_ok(test);
+		report_fail(test);
+	}
+	function test_onok_data(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			cb: {
+				_onok: test_onok_data_onok.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
+	}
+	function test_onok_data_onok(test, data)
+	{
+		if ((test.method == 'GET') &&
+		    (data == "get_resp"))
+			return report_ok(test);
+		if ((test.method == 'HEAD') &&
+		    (data == ""))
+			return report_ok(test);
+		if ((test.method == 'POST') &&
+		    (data == "post_resp"))
+			return report_ok(test);
+		if ((test.method == 'PUT') &&
+		    (data == "put_resp"))
+			return report_ok(test);
+		if ((test.method == 'DELETE') &&
+		    (data == "delete_resp"))
+			return report_ok(test);
+		report_fail(test);
+	}
+	function test_onnotok_data(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: test_onnotok_data_onnotok.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
+	}
+	function test_onnotok_data_onnotok(test, err)
+	{
+		if ((err.code != test.err_code) ||
+		    (err.name != test.err_name))
+			report_fail(test);
+		
+		if ((test.method == 'GET') &&
+		    (err.message == "get_resp"))
+			return report_ok(test);
+		if ((test.method == 'HEAD') &&
+		    (err.message == ""))
+			return report_ok(test);
+		if ((test.method == 'POST') &&
+		    (err.message == "post_resp"))
+			return report_ok(test);
+		if ((test.method == 'PUT') &&
+		    (err.message == "put_resp"))
+			return report_ok(test);
+		if ((test.method == 'DELETE') &&
+		    (err.message == "delete_resp"))
+			return report_ok(test);
+		report_fail(test);
+	}
+	function test_onfail_data(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			timeout: 1000,
+			cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: test_onfail_data_onfail.bind(this, test)}});
+	}
+	function test_onfail_data_onfail(test, err)
+	{
+		if (err.name != "httpreq.timeout")
+			report_fail(test);
+		report_ok(test);
+	}
+</script>
+</head>
+<body onload="do_tests()">
+  <div style="margin: 1em">
+    run/pass/fail/total: <span id="counter">0/0/0/0</span>
+  </div>
+
+  <div style="display: none">
+    <span class="results_fail" style="color: red; font-weight: bold">fail</span>
+    <span class="results_ok" style="color: green; font-weight: bold">ok</span>
+  </div>
+  
+  <div id="results">
+  </div>
+</body>
+</html>

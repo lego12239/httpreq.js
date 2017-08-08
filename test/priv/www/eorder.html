@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<head>
+  <script type="text/javascript" src="httpreq.js">
+  </script>
+  <script type="text/javascript">
+    "use strict;"
+    var tests = [
+    	{
+    		id: "get",
+    		method: "GET"},
+    	{
+    		id: "head",
+    		method: "HEAD"},
+    	{
+    		id: "post",
+    		method: "POST"},
+    	{
+    		id: "put",
+    		method: "PUT"},
+    	{
+    		id: "delete",
+    		method: "DELETE"},
+    	{
+    		id: "get_timeout",
+    		method: "GET",
+    		timeout: 1000},
+    	{
+    		id: "head_timeout",
+    		method: "HEAD",
+    		timeout: 1000},
+    	{
+    		id: "post_timeout",
+    		method: "POST",
+    		timeout: 1000},
+    	{
+    		id: "put_timeout",
+    		method: "PUT",
+    		timeout: 1000},
+    	{
+    		id: "delete_timeout",
+    		method: "DELETE",
+    		timeout: 1000},
+    	{
+    		id: "get_abort",
+    		method: "GET",
+    		cb: {
+    			onloadstart: reqabort}},
+    	{
+    		id: "head_abort",
+    		method: "HEAD",
+    		cb: {
+    			onloadstart: reqabort}},
+    	{
+    		id: "post_abort",
+    		method: "POST",
+    		cb: {
+    			onloadstart: reqabort}},
+    	{
+    		id: "put_abort",
+    		method: "PUT",
+    		cb: {
+    			onloadstart: reqabort}},
+    	{
+    		id: "delete_abort",
+    		method: "DELETE",
+    		cb: {
+    			onloadstart: reqabort}},
+    	{
+    		id: "get_abort_upload",
+    		method: "GET",
+    		cb: {
+    			u_onloadstart: reqabort}},
+    	{
+    		id: "head_abort_upload",
+    		method: "HEAD",
+    		cb: {
+    			u_onloadstart: reqabort}},
+    	{
+    		id: "post_abort_upload",
+    		method: "POST",
+    		cb: {
+    			u_onloadstart: reqabort}},
+    	{
+    		id: "put_abort_upload",
+    		method: "PUT",
+    		cb: {
+    			u_onloadstart: reqabort}},
+    	{
+    		id: "delete_abort_upload",
+    		method: "DELETE",
+    		cb: {
+    			u_onloadstart: reqabort}},
+    	{
+    		id: "get_abort_progress",
+    		method: "GET",
+    		cb: {
+    			onprogress: reqabort}},
+    	{
+    		id: "head_abort_progress",
+    		method: "HEAD",
+    		cb: {
+    			onprogress: reqabort}},
+    	{
+    		id: "post_abort_progress",
+    		method: "POST",
+    		cb: {
+    			onprogress: reqabort}},
+    	{
+    		id: "put_abort_progress",
+    		method: "PUT",
+    		cb: {
+    			onprogress: reqabort}},
+    	{
+    		id: "delete_abort_progress",
+    		method: "DELETE",
+    		cb: {
+    			onprogress: reqabort}},
+    	{
+    		id: "get_error",
+    		method: "GET",
+    		uri: "http://localhost:9999/q"}];
+  var test_idx;
+  var test_mode = 0; /* 1 - parallel, 2 - sequence, 3 - one */
+  var priv = {};
+  
+  function reqabort(req)
+  {
+    req.abort();
+  }
+  function test_all()
+  {
+    var i;
+    
+    test_mode = 1;
+    test_idx = -1;
+  	document.getElementById("test_all").disabled = true;
+    for(i = 0; i < tests.length; i++) {
+    	priv[tests[i].id] = 1;
+    	test_item(tests[i]);
+    }
+  }
+  
+  function test_all_in_sequence()
+  {
+    test_mode = 2;
+  	test_idx = -1;
+  	document.getElementById("test_all_in_sequence").disabled = true;
+  	test_next();
+  }
+  
+  function test_one(test)
+  {
+  	test_mode = 3;
+  	test_item(test);
+  }
+  
+  function test_next()
+  {
+  	if (test_idx == (tests.length-1)) {
+  		document.getElementById("test_all_in_sequence").disabled = false;
+  		return;
+  	}
+	test_item(tests[++test_idx]);
+  }
+  
+  function test_item(item)
+  {
+    var xhr;
+    log_item(item.id, "test " + item.id);
+
+	if (item.cb == null)
+		item.cb = {};
+	
+    xhr = new XMLHttpRequest();
+        xhr.upload.onabort = item_cb.bind(xhr, item, "u_abort", item.cb.u_onabort);
+        xhr.upload.onerror = item_cb.bind(xhr, item,  "u_error", item.cb.u_onerror);
+        xhr.upload.onload = item_cb.bind(xhr, item,  "u_load", item.cb.u_onload);
+        xhr.upload.onloadstart = item_cb.bind(xhr, item,  "u_loadstart", item.cb.u_onloadstart);
+        xhr.upload.onprogress = item_cb.bind(xhr, item,  "u_progress", item.cb.u_onprogress);
+        xhr.upload.ontimeout = item_cb.bind(xhr, item,  "u_timeout", item.cb.u_ontimeout);
+        xhr.upload.onloadend = item_cb.bind(xhr, item,  "u_loadend", item.cb.u_onloadend);
+
+        xhr.onabort = item_cb.bind(xhr, item,  "abort", item.cb.onabort);
+        xhr.onerror = item_cb.bind(xhr, item,  "error", item.cb.onerror);
+        xhr.onload = item_cb.bind(xhr, item,  "load", item.cb.onload);
+        xhr.onloadstart = item_cb.bind(xhr, item,  "loadstart", item.cb.onloadstart);
+        xhr.onprogress = item_cb.bind(xhr, item,  "progress", item.cb.onprogress);
+        xhr.ontimeout = item_cb.bind(xhr, item,  "timeout", item.cb.ontimeout);
+        xhr.onloadend = item_cb.bind(xhr, item,  "loadend", item.cb.onloadend);
+    
+    xhr.open(item.method, "/eorder_test", true);
+    xhr.timeout = item.timeout != null ? item.timeout : 0;
+    if ((item.method.toUpperCase() == "GET") ||
+        (item.method.toUpperCase() == "HEAD") ||
+        (item.method.toUpperCase() == "DELETE"))
+    	xhr.send(null);
+    else
+    	xhr.send("data");
+  }
+  function test_item_old(item)
+  {
+    log_item(item.id, "test " + item.id);
+
+	if (item.cb == null)
+		item.cb = {};
+	
+    httpreq({
+      method: item.method,
+      uri: item.uri != null ? item.uri : "/eorder_test",
+      data: "string",
+	  timeout: item.timeout,
+      cb: {
+          u_onabort: item_cb_old.bind(this, item, "u_abort", item.cb.u_onabort),
+          u_onerror: item_cb_old.bind(this, item,  "u_error", item.cb.u_onerror),
+          u_onload: item_cb_old.bind(this, item,  "u_load", item.cb.u_onload),
+          u_onloadstart: item_cb_old.bind(this, item,  "u_loadstart", item.cb.u_onloadstart),
+          u_onprogress: item_cb_old.bind(this, item,  "u_progress", item.cb.u_onprogress),
+          u_ontimeout: item_cb_old.bind(this, item,  "u_timeout", item.cb.u_ontimeout),
+          u_onloadend: item_cb_old.bind(this, item,  "u_loadend", item.cb.u_onloadend),
+          onabort: item_cb_old.bind(this, item,  "abort", item.cb.onabort),
+          onerror: item_cb_old.bind(this, item,  "error", item.cb.onerror),
+          onload: item_cb_old.bind(this, item,  "load", item.cb.onload),
+          onloadstart: item_cb_old.bind(this, item,  "loadstart", item.cb.onloadstart),
+          onprogress: item_cb_old.bind(this, item,  "progress", item.cb.onprogress),
+          ontimeout: item_cb_old.bind(this, item,  "timeout", item.cb.ontimeout),
+          onloadend: item_cb_old.bind(this, item,  "loadend", item.cb.onloadend)}});
+  }
+  function item_cb(item, title, cb)
+  {
+    log_item(item.id, title);
+    if (cb != null)
+    	cb(this);
+    if (title == "loadend") {
+    	switch (test_mode) {
+    		case 1:
+    			if (--priv[item.id] == 0)
+    				if (++test_idx == (tests.length-1))
+	  					document.getElementById("test_all").disabled = false;
+    			break;
+    		case 2:
+    			if (item.id == tests[test_idx].id)
+    				test_next();
+    			break;
+    	}
+    }
+  }
+  function item_cb_old(item, title, cb, ev)
+  {
+    log_item(item.id, title);
+    if (cb != null)
+    	cb(ev.target);
+    if ((title == "loadend") &&
+        (item.id == tests[test_idx].id))
+    	test_next();
+  }
+  function log_item(id, msg)
+  {
+  	var el = document.getElementById("item_" + id);
+  	
+  	if (el == null) {
+  		el = document.createElement("div");
+  		el.id = "item_" + id;
+  		document.getElementById("logbox").appendChild(el);
+  		el.appendChild(document.createElement("div"));
+  		el.appendChild(document.createElement("div"));
+  		el = el.querySelector("div");
+  	} else
+  		el = el.querySelectorAll("div")[1];
+  	
+  	el.innerHTML += "<br/>" + msg;
+  }
+  function init()
+  {
+    var cntr_el = document.getElementById("ctrl");
+    var el;
+    
+    for(i = 0; i < tests.length; i++) {
+    	el = document.createElement("input");
+    	el.type = "button";
+    	el.value = "test " + tests[i].id;
+    	el.addEventListener("click", test_one.bind(this, tests[i]), false);
+    	cntr_el.appendChild(el);
+    }
+  }
+  function save()
+  {
+  	var i, d = [];
+  	
+  	for(i = 0; i < tests.length; i++) {
+  		d.push({id: tests[i].id,
+  		  res: document.getElementById("item_" + tests[i].id).querySelectorAll("div")[1].innerHTML});
+  	}
+  	httpreq({method: "POST", uri: "/eorder_save", enctype: "application/x-www-form-urlencoded", data: {
+  	  name: document.getElementById("test_name").value,
+  	  data: JSON.stringify(d)}});
+  }
+  function enable_saving()
+  {
+  	document.getElementById("save_but").disabled = false;
+  }
+  </script>
+</head>
+<body onload="init()">
+  <input type="button" id="test_all" onclick="test_all()" value="test all"/>
+  <input type="button" id="test_all_in_sequence" onclick="test_all_in_sequence()" value="test all(in sequence)"/>
+  <input type="text" id="test_name" value="" onchange="enable_saving()"/>
+  <input type="button" id="save_but" onclick="save()" value="save" disabled/>
+  <a href="/eorder_show">show the table of results</a>
+  <br/>
+  <div id="ctrl">
+  </div>
+  <div id="logbox">
+  </div>
+</body>
+</html>

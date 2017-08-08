@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+    table tr:first-child td {
+		text-align: center;
+	}
+  </style>
+  <script type="text/javascript">
+    var data_order = [];
+    var data = [];
+    <TMPL_LOOP NAME=loop>
+    data.push({name: "<TMPL_VAR NAME=name>", data: <TMPL_VAR NAME=data>});
+    data_order.push(data.length-1);
+    </TMPL_LOOP>
+    
+    function init()
+    {
+      var i, j, tr_el, td_el, cntr_el, el;
+
+      fill_order_list();
+      
+	  cntr_el = document.querySelector("table");      
+      tr_el = document.createElement("tr");
+      cntr_el.appendChild(tr_el);
+	  td_el = document.createElement("td");
+	  tr_el.appendChild(td_el);
+      for(i = 0; i < data_order.length; i++) {
+		td_el = document.createElement("td");
+		tr_el.appendChild(td_el);
+		td_el.innerHTML = data[data_order[i]].name;
+	  }
+      	
+      for(i = 0; i < data[0].data.length; i++) {
+        tr_el = document.createElement("tr");
+        cntr_el.appendChild(tr_el);
+		td_el = document.createElement("td");
+		tr_el.appendChild(td_el);
+		td_el.innerHTML = data[0].data[i].id;
+      		for(j = 0; j < data_order.length; j++) {
+				td_el = document.createElement("td");
+				tr_el.appendChild(td_el);
+				td_el.innerHTML = data[data_order[j]].data[i].res;
+			}
+      }
+    }
+    function redraw()
+    {
+    	var els = document.querySelectorAll("#order_list select");
+      
+    	for(i = 0; i < els.length; i++)
+    		data_order[i] = els[i].value;
+	    document.getElementById("table").innerHTML = "";
+	    init();
+    }
+    function toggle_order_dialog()
+    {
+      var el = document.getElementById("order_dialog");
+      
+      if (el.style.display == "none")
+      	el.style.display = "block";
+      else
+      	el.style.display = "none";
+    }
+    function fill_order_list()
+    {
+    	var i;
+    	var el, sel_el, cntr_el;
+    	
+    	cntr_el = document.getElementById("order_list");
+    	cntr_el.innerHTML = "";
+    	for(i = 0; i < data_order.length; i++) {
+    		sel_el = document.createElement("select");
+    		cntr_el.appendChild(sel_el);
+    		for(j = 0; j < data.length; j++) {
+    			el = document.createElement("option");
+    			el.value=j;
+    			el.innerHTML = data[j].name;
+    			if (data_order[i] == j)
+    				el.selected = true;
+    			sel_el.appendChild(el);
+    		}
+    	}
+    }
+  </script>
+</head>
+<body onload="init()">
+<div>
+  <span onclick="toggle_order_dialog()" style="cursor: pointer; color: blue; text-decoration: underline">
+    change order
+  </span>
+  <div id="order_dialog" style="display: none">
+    <input type="button" onclick="redraw()" value="redraw"/>
+    <div id="order_list">
+    </div>
+  </div>
+</div>
+<table id="table" border=1>
+</table>
+</body>
+</html>
