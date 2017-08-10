@@ -16,6 +16,7 @@
 		get: function () { return counters._failed; },
 		set: function () { counters._failed++; counters_show(); }});
 	var test_idx = -1;
+	var timeid;
 	var span_ok, span_fail, res_cntr_el;
 	var tests = [
 		{
@@ -494,10 +495,13 @@
 	}
 	function do_next_test()
 	{
+		clearTimeout(timeid);
 		if (test_idx == (tests.length-1))
 			return;
 		test_idx++;
 		report_testname(tests[test_idx]);
+		timeid = setTimeout(function () {report_fail(tests[test_idx]);},
+		  tests[test_idx].timeout == null ? 10000 : tests[test_idx].timeout);
 		tests[test_idx].fun(tests[test_idx]);
 		counters.run++;
 	}
