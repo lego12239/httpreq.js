@@ -500,6 +500,8 @@
 			return;
 		test_idx++;
 		report_testname(tests[test_idx]);
+		tests[test_idx].is_ok = 0;
+		tests[test_idx].is_fail = 0;
 		timeid = setTimeout(function () {report_fail(tests[test_idx]);},
 		  tests[test_idx].timeout == null ? 10000 : tests[test_idx].timeout);
 		tests[test_idx].fun(tests[test_idx]);
@@ -528,6 +530,7 @@
 		el = document.getElementById(test.id);
 		el.appendChild(span_ok.cloneNode(true));
 		counters.passed++;
+		test.is_ok++;
 		if (test.id == tests[test_idx].id)
 			do_next_test();
 	}
@@ -539,6 +542,7 @@
 		el = document.getElementById(test.id);
 		el.appendChild(span_fail.cloneNode(true));
 		counters.failed++;
+		test.is_fail++;
 		if (test.id == tests[test_idx].id)
 			do_next_test();
 	}
