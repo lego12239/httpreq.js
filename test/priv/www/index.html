@@ -478,7 +478,44 @@
 			title: "Test DELETE _onfail data(timeout)",
 			method: 'DELETE',
 			uri: '/test/delete_timeout',
-			fun: test_onfail_data}];
+			fun: test_onfail_data},
+		{
+			id: "unit72",
+			title: "Test GET events firing order",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_get_events_order},
+		{
+			id: "unit73",
+			title: "Test HEAD events firing order",
+			method: 'HEAD',
+			uri: '/test/head',
+			fun: test_head_events_order},
+		{
+			id: "unit74",
+			title: "Test POST events firing order",
+			method: 'POST',
+			uri: '/test/post',
+			fun: test_post_events_order},
+		{
+			id: "unit75",
+			title: "Test PUT events firing order",
+			method: 'PUT',
+			uri: '/test/put',
+			fun: test_put_events_order},
+		{
+			id: "unit76",
+			title: "Test DELETE events firing order",
+			method: 'DELETE',
+			uri: '/test/delete',
+			fun: test_delete_events_order},
+		{
+			id: "unit9999",
+			title: "Just wait a minute(we must collect fails if any)",
+			method: '',
+			uri: '',
+			timeout: 15000,
+			fun: collect_fails}];
 	
 	function do_tests()
 	{
@@ -853,6 +890,192 @@
 	{
 		if (err.name != "httpreq.timeout")
 			report_fail(test);
+		report_ok(test);
+	}
+	function test_get_events_order(test)
+	{
+		counters.priv[test.id] = {
+			order_must: /^loadstart(-progress)*-load-loadend$/,
+			order_real: ""};
+		
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			timeout: 1000,
+			cb: {
+				u_onabort: report_fail.bind(this, test),
+				u_onerror: report_fail.bind(this, test),
+				u_ontimeout: report_fail.bind(this, test),
+				u_onload: report_fail.bind(this, test),
+				u_onloadstart: report_fail.bind(this, test),
+				u_onprogress: report_fail.bind(this, test),
+				u_onloadend: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test),
+				onload: test_events_order_onload.bind(this, test, "load"),
+				onloadstart: test_events_order_onload.bind(this, test,
+				  "loadstart"),
+				onprogress: test_events_order_onload.bind(this, test,
+				  "progress"),
+				onloadend: test_events_order_onload.bind(this, test,
+				  "loadend")}});
+	}
+	function test_head_events_order(test)
+	{
+		counters.priv[test.id] = {
+			order_must: /^loadstart(-progress)*-load-loadend$/,
+			order_real: ""};
+		
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			timeout: 1000,
+			cb: {
+				u_onabort: report_fail.bind(this, test),
+				u_onerror: report_fail.bind(this, test),
+				u_ontimeout: report_fail.bind(this, test),
+				u_onload: report_fail.bind(this, test),
+				u_onloadstart: report_fail.bind(this, test),
+				u_onprogress: report_fail.bind(this, test),
+				u_onloadend: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test),
+				onload: test_events_order_onload.bind(this, test, "load"),
+				onloadstart: test_events_order_onload.bind(this, test,
+				  "loadstart"),
+				onprogress: test_events_order_onload.bind(this, test,
+				  "progress"),
+				onloadend: test_events_order_onload.bind(this, test,
+				  "loadend")}});
+	}
+	function test_post_events_order(test)
+	{
+		counters.priv[test.id] = {
+			order_must: /^loadstart-u_loadstart(-u_progress)*-u_load-u_loadend(-progress)*-load-loadend$/,
+			order_real: ""};
+		
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			timeout: 1000,
+			cb: {
+				u_onabort: report_fail.bind(this, test),
+				u_onerror: report_fail.bind(this, test),
+				u_ontimeout: report_fail.bind(this, test),
+				u_onload: test_events_order_onload.bind(this, test, "u_load"),
+				u_onloadstart: test_events_order_onload.bind(this, test,
+				  "u_loadstart"),
+				u_onprogress: test_events_order_onload.bind(this, test,
+				  "u_progress"),
+				u_onloadend: test_events_order_onload.bind(this, test,
+				  "u_loadend"),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test),
+				onload: test_events_order_onload.bind(this, test, "load"),
+				onloadstart: test_events_order_onload.bind(this, test,
+				  "loadstart"),
+				onprogress: test_events_order_onload.bind(this, test,
+				  "progress"),
+				onloadend: test_events_order_onload.bind(this, test,
+				  "loadend")}});
+	}
+	function test_put_events_order(test)
+	{
+		counters.priv[test.id] = {
+			order_must: /^loadstart-u_loadstart(-u_progress)*-u_load-u_loadend(-progress)*-load-loadend$/,
+			order_real: ""};
+		
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			timeout: 1000,
+			cb: {
+				u_onabort: report_fail.bind(this, test),
+				u_onerror: report_fail.bind(this, test),
+				u_ontimeout: report_fail.bind(this, test),
+				u_onload: test_events_order_onload.bind(this, test, "u_load"),
+				u_onloadstart: test_events_order_onload.bind(this, test,
+				  "u_loadstart"),
+				u_onprogress: test_events_order_onload.bind(this, test,
+				  "u_progress"),
+				u_onloadend: test_events_order_onload.bind(this, test,
+				  "u_loadend"),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test),
+				onload: test_events_order_onload.bind(this, test, "load"),
+				onloadstart: test_events_order_onload.bind(this, test,
+				  "loadstart"),
+				onprogress: test_events_order_onload.bind(this, test,
+				  "progress"),
+				onloadend: test_events_order_onload.bind(this, test,
+				  "loadend")}});
+	}
+	function test_delete_events_order(test)
+	{
+		counters.priv[test.id] = {
+			order_must: /^loadstart(-progress)*-load-loadend$/,
+			order_real: ""};
+		
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			timeout: 1000,
+			cb: {
+				u_onabort: report_fail.bind(this, test),
+				u_onerror: report_fail.bind(this, test),
+				u_ontimeout: report_fail.bind(this, test),
+				u_onload: report_fail.bind(this, test),
+				u_onloadstart: report_fail.bind(this, test),
+				u_onprogress: report_fail.bind(this, test),
+				u_onloadend: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onerror: report_fail.bind(this, test),
+				ontimeout: report_fail.bind(this, test),
+				onload: test_events_order_onload.bind(this, test, "load"),
+				onloadstart: test_events_order_onload.bind(this, test,
+				  "loadstart"),
+				onprogress: test_events_order_onload.bind(this, test,
+				  "progress"),
+				onloadend: test_events_order_onload.bind(this, test,
+				  "loadend")}});
+	}
+	function test_events_order_onload(test, ename)
+	{
+		var priv = counters.priv[test.id];
+		
+		if (priv.order_real == "")
+			priv.order_real += ename;
+		else
+			priv.order_real += "-" + ename;
+		
+		if ((!test.is_ok) && (priv.order_must.test(priv.order_real)))
+			report_ok(test);
+	}
+	function collect_fails(test)
+	{
+		setTimeout(collect_fails_do.bind(this, test), 10000);
+	}
+	function collect_fails_do(test)
+	{
+		var tests_to_check = ["unit73"];
+		var priv;
+		var i, j;
+		
+		for(i = 0; i < tests.length; i++) {
+			for(j = 0; j < tests_to_check.length; j++)
+				if (tests[i].id == tests_to_check[j]) {
+					priv = counters.priv[tests[i].id];
+					if ((!tests[i].is_fail) &&
+					    (!priv.order_must.test(priv.order_real)))
+						report_fail(tests[i]);
+					tests_to_check.splice(j, 1);
+					break;
+				}
+		}
 		report_ok(test);
 	}
 </script>
