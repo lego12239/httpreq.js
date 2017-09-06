@@ -32,15 +32,19 @@ function httpreq(p_)
 		else
 			reqs = p[i];
 		rpacks[i] = {reqs: [], sem: 0};
-		for(j = 0; j < reqs.length; j++) {
-			rpacks[i].reqs[j] = new httpreq.o(reqs[j]);
-			rpacks[i].reqs[j].r.addEventListener("load",
-			  httpreq.next_req.bind(this, rpacks, i, j));
-		}
+		if ((reqs.length == 1) &&
+		    (reqs[0].uri == null) &&
+		    (reqs[0].cb != null))
+			rpacks[i].reqs[0] = reqs[0];
+		else
+			for(j = 0; j < reqs.length; j++) {
+				rpacks[i].reqs[j] = new httpreq.o(reqs[j]);
+				rpacks[i].reqs[j].r.addEventListener("load",
+				  httpreq.next_req.bind(this, rpacks, i, j));
+			}
 		rpacks[i].sem = reqs.length;
 	}
-	for(i = 0; i < rpacks[0].reqs.length; i++)
-		rpacks[0].reqs[i].go();
+	httpreq.do_req(rpacks, 0, 0);
 }
 
 httpreq.p = {
@@ -90,11 +94,23 @@ httpreq.err_msg = {
 
 httpreq.next_req = function (rpacks, i, j)
 {
-	//console.log("finish call " + i + "." + j);
+	console.log("finish call " + i + "." + j);
 	rpacks[i].sem--;
 	if ((rpacks[i].sem == 0) && ((i + 1) < rpacks.length))
-		for(j = 0; j < rpacks[i + 1].reqs.length; j++)
-			rpacks[i + 1].reqs[j].go();
+		httpreq.do_req(rpacks, i + 1, 0);
+}
+
+httpreq.do_req = function (rpacks, i, j)
+{
+	console.log("do call " + i + "." + j);
+	if ((rpacks[i].reqs.length == 1) &&
+	    !(rpacks[i].reqs[0] instanceof httpreq.o)) {
+		rpacks[i].reqs[0].cb();
+		httpreq.next_req(rpacks, i, 0);
+	} else {
+		for(j = 0; j < rpacks[i].reqs.length; j++)
+			rpacks[i].reqs[j].go();
+	}
 }
 
 httpreq.o = function (p)
