@@ -20,11 +20,23 @@
 
 function httpreq(p)
 {
-	var r;
+	var r = {pack: [], sem: []}, i, j;
 	
-	
-	r = new httpreq.o(p);
-	r.go();
+	if (!Array.isArray(p))
+		p = [p];
+	for(i = 0; i < p.length; i++) {
+		if (!Array.isArray(p[i]))
+			p[i] = [p[i]];
+		r.pack[i] = [];
+		for(j = 0; j < p[i].length; j++) {
+			r.pack[i][j] = new httpreq.o(p[i][j]);
+			r.pack[i][j].r.addEventListener("load",
+			  httpreq.next_req.bind(this, r, i, j));
+		}
+		r.sem[i] = p[i].length;
+	}
+	for(i = 0; i < r.pack[0].length; i++)
+		r.pack[0][i].go();
 }
 
 httpreq.p = {
@@ -71,6 +83,15 @@ httpreq.err_msg = {
 	"timeout": "Download timeout reached",
 	"enctype_err": "Unknown encoding type %s"
 };
+
+httpreq.next_req = function (r, i, j)
+{
+	//console.log("finish call " + i + "." + j);
+	r.sem[i]--;
+	if ((r.sem[i] == 0) && ((i + 1) < r.pack.length))
+		for(j = 0; j < r.pack[i + 1].length; j++)
+			r.pack[i + 1][j].go();
+}
 
 httpreq.o = function (p)
 {
