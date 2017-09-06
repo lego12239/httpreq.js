@@ -86,21 +86,21 @@ httpreq.o = function (p)
 	this._set_headers(p.headers);
 
 	this.r = new XMLHttpRequest();
-	this.r.upload.onabort = this.u_onabort.bind(this);
-	this.r.upload.onerror = this.u_onerror.bind(this);
-	this.r.upload.onload = this.u_onload.bind(this);
-	this.r.upload.onloadstart = this.u_onloadstart.bind(this);
-	this.r.upload.onprogress = this.u_onprogress.bind(this);
-	this.r.upload.ontimeout = this.u_ontimeout.bind(this);
-	this.r.upload.onloadend = this.u_onloadend.bind(this);
+	this.r.upload.addEventListener("abort", this.u_onabort.bind(this));
+	this.r.upload.addEventListener("error", this.u_onerror.bind(this));
+	this.r.upload.addEventListener("load", this.u_onload.bind(this));
+	this.r.upload.addEventListener("loadstart", this.u_onloadstart.bind(this));
+	this.r.upload.addEventListener("progress", this.u_onprogress.bind(this));
+	this.r.upload.addEventListener("timeout", this.u_ontimeout.bind(this));
+	this.r.upload.addEventListener("loadend", this.u_onloadend.bind(this));
 
-	this.r.onabort = this.onabort.bind(this);
-	this.r.onerror = this.onerror.bind(this);
-	this.r.onload = this.onload.bind(this);
-	this.r.onloadstart = this.onloadstart.bind(this);
-	this.r.onprogress = this.onprogress.bind(this);
-	this.r.ontimeout = this.ontimeout.bind(this);
-	this.r.onloadend = this.onloadend.bind(this);
+	this.r.addEventListener("abort", this.onabort.bind(this));
+	this.r.addEventListener("error", this.onerror.bind(this));
+	this.r.addEventListener("load", this.onload.bind(this));
+	this.r.addEventListener("loadstart", this.onloadstart.bind(this));
+	this.r.addEventListener("progress", this.onprogress.bind(this));
+	this.r.addEventListener("timeout", this.ontimeout.bind(this));
+	this.r.addEventListener("loadend", this.onloadend.bind(this));
 }
 
 httpreq.o.prototype._set_prms = function (p_in)
