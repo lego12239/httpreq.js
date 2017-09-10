@@ -40,11 +40,11 @@ function httpreq(p_)
 			for(j = 0; j < reqs.length; j++) {
 				rpacks[i].reqs[j] = new httpreq.o(reqs[j]);
 				rpacks[i].reqs[j].r.addEventListener("load",
-				  httpreq.next_req.bind(this, rpacks, i, j));
+				  httpreq.req_done.bind(this, rpacks, i, j));
 			}
 		rpacks[i].sem = reqs.length;
 	}
-	httpreq.do_req(rpacks, 0, 0);
+	httpreq.rpack_do(rpacks, 0);
 }
 
 httpreq.p = {
@@ -92,21 +92,23 @@ httpreq.err_msg = {
 	"enctype_err": "Unknown encoding type %s"
 };
 
-httpreq.next_req = function (rpacks, i, j)
+httpreq.req_done = function (rpacks, i, j)
 {
-	console.log("finish call " + i + "." + j);
+	console.log("req " + i + "." + j + " is done");
 	rpacks[i].sem--;
 	if ((rpacks[i].sem == 0) && ((i + 1) < rpacks.length))
-		httpreq.do_req(rpacks, i + 1, 0);
+		httpreq.rpack_do(rpacks, i + 1, 0);
 }
 
-httpreq.do_req = function (rpacks, i, j)
+httpreq.rpack_do = function (rpacks, i)
 {
-	console.log("do call " + i + "." + j);
+	var j;
+	
+	console.log("do rpack " + i);
 	if ((rpacks[i].reqs.length == 1) &&
 	    !(rpacks[i].reqs[0] instanceof httpreq.o)) {
 		rpacks[i].reqs[0].cb();
-		httpreq.next_req(rpacks, i, 0);
+		httpreq.req_done(rpacks, i, 0);
 	} else {
 		for(j = 0; j < rpacks[i].reqs.length; j++)
 			rpacks[i].reqs[j].go();
