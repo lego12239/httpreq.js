@@ -20,8 +20,7 @@
 
 function httpreq(p_)
 {
-	var r = {pack: [], sem: []}, i, j;
-	var p, rpack;
+	var rpacks = [], i, j, reqs, p;
 	
 	if (!Array.isArray(p_))
 		p = [p_];
@@ -29,19 +28,19 @@ function httpreq(p_)
 		p = p_;
 	for(i = 0; i < p.length; i++) {
 		if (!Array.isArray(p[i]))
-			rpack = [p[i]];
+			reqs = [p[i]];
 		else
-			rpack = p[i];
-		r.pack[i] = [];
-		for(j = 0; j < rpack.length; j++) {
-			r.pack[i][j] = new httpreq.o(rpack[j]);
-			r.pack[i][j].r.addEventListener("load",
-			  httpreq.next_req.bind(this, r, i, j));
+			reqs = p[i];
+		rpacks[i] = {reqs: [], sem: 0};
+		for(j = 0; j < reqs.length; j++) {
+			rpacks[i].reqs[j] = new httpreq.o(reqs[j]);
+			rpacks[i].reqs[j].r.addEventListener("load",
+			  httpreq.next_req.bind(this, rpacks, i, j));
 		}
-		r.sem[i] = rpack.length;
+		rpacks[i].sem = reqs.length;
 	}
-	for(i = 0; i < r.pack[0].length; i++)
-		r.pack[0][i].go();
+	for(i = 0; i < rpacks[0].reqs.length; i++)
+		rpacks[0].reqs[i].go();
 }
 
 httpreq.p = {
@@ -89,13 +88,13 @@ httpreq.err_msg = {
 	"enctype_err": "Unknown encoding type %s"
 };
 
-httpreq.next_req = function (r, i, j)
+httpreq.next_req = function (rpacks, i, j)
 {
 	//console.log("finish call " + i + "." + j);
-	r.sem[i]--;
-	if ((r.sem[i] == 0) && ((i + 1) < r.pack.length))
-		for(j = 0; j < r.pack[i + 1].length; j++)
-			r.pack[i + 1][j].go();
+	rpacks[i].sem--;
+	if ((rpacks[i].sem == 0) && ((i + 1) < rpacks.length))
+		for(j = 0; j < rpacks[i + 1].reqs.length; j++)
+			rpacks[i + 1].reqs[j].go();
 }
 
 httpreq.o = function (p)
