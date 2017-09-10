@@ -18,22 +18,27 @@
 {
 "use strict";
 
-function httpreq(p)
+function httpreq(p_)
 {
 	var r = {pack: [], sem: []}, i, j;
+	var p, rpack;
 	
-	if (!Array.isArray(p))
-		p = [p];
+	if (!Array.isArray(p_))
+		p = [p_];
+	else
+		p = p_;
 	for(i = 0; i < p.length; i++) {
 		if (!Array.isArray(p[i]))
-			p[i] = [p[i]];
+			rpack = [p[i]];
+		else
+			rpack = p[i];
 		r.pack[i] = [];
-		for(j = 0; j < p[i].length; j++) {
-			r.pack[i][j] = new httpreq.o(p[i][j]);
+		for(j = 0; j < rpack.length; j++) {
+			r.pack[i][j] = new httpreq.o(rpack[j]);
 			r.pack[i][j].r.addEventListener("load",
 			  httpreq.next_req.bind(this, r, i, j));
 		}
-		r.sem[i] = p[i].length;
+		r.sem[i] = rpack.length;
 	}
 	for(i = 0; i < r.pack[0].length; i++)
 		r.pack[0][i].go();
