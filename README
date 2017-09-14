@@ -15,9 +15,9 @@ argument. E.g.:
            resptype: "json",
            ok_rex: /2\d\d/,
            timeout: 6000,
-           cb: {onok: req_ok,
-                onnotok: req_notok,
-                onfail: req_onfail.bind(this, "get_data req fail: ")}});
+           cb: {_onok: req_ok,
+                _onnotok: req_notok,
+                _onfail: req_onfail.bind(this, "get_data req fail: ")}});
 
 This call is doing a request to /get_data relative uri and wait a return
 data in json format which is placed in first argument of req_ok() callback
@@ -51,38 +51,38 @@ data
   application/x-www-form-urlencoded encoding; for other methods(e.g. PUT and
   POST) data is placed in payload according to specified enctype.
 resptype
-  a format of a response data that onok callback waits for
+  a format of a response data that _onok callback waits for
   Accept any values that XMLHttpRequest is supported("text", "json", "document",
   etc).
 timeout
   a milliseconds quantity during which a response must be received
 ok_rex
   regexp to classify a response status code as successful
-cb.u.*
+cb.u_on*
   upload callbacks(supported by XMLHttpRequest)
   If you need fine control or progress indicator or something else.
   All callbacks get an Event object as first argument and this is equal
   to httpreq.o object.
-  If onabort/onerror/ontimeout callback is specified, then onfail callback
+  If onabort/onerror/ontimeout callback is specified, then _onfail callback
   isn't called for this event.
-cb.d.*
+cb.on*
   download callbacks(supported by XMLHttpRequest)
   If you need fine control or progress indicator or something else.
   All callbacks get an Event object as first argument and this is equal
   to httpreq.o object.
-  If onabort/onerror/ontimeout callback is specified, then onfail callback
+  If onabort/onerror/ontimeout callback is specified, then _onfail callback
   isn't called for this event.
-cb.onok
+cb._onok
   a callback for successful response
   This callback is called if a response is received and response status code
   is satisfied ok_rex regexp.
   The callback get data in specified resptype format as first argument.
-cb.onnotok
+cb._onnotok
   a callback for unsuccessful response
   This callback is called if a response is received and response status code
   is not satisfied ok_rex regexp.
   The callback get Error object as first argument.
-cb.onfail
+cb._onfail
   a callback for request fail
   This callback is called if a request is failed(due to client-side abort or
   error; or timeout)
@@ -97,9 +97,9 @@ from httpreq.p object. So, we can omit ok_rex parameter from previous example:
   httpreq({uri: "/get_data",
            resptype: "json",
            timeout: 6000,
-           cb: {onok: req_ok,
-                onnotok: req_notok,
-                onfail: req_onfail.bind(this, "get_data req fail: ")}});
+           cb: {_onok: req_ok,
+                _onnotok: req_notok,
+                _onfail: req_onfail.bind(this, "get_data req fail: ")}});
 
 Moreover, we can set default value for timeout and for resptype(if our
 application always wait a json format):
@@ -108,11 +108,60 @@ application always wait a json format):
   httpreq.p.resptype = "json";
 
   httpreq({uri: "/get_data",
-           cb: {onok: req_ok,
-                onnotok: req_notok,
-                onfail: req_onfail.bind(this, "get_data req fail: ")}});
+           cb: {_onok: req_ok,
+                _onnotok: req_notok,
+                _onfail: req_onfail.bind(this, "get_data req fail: ")}});
 
 Now, our httpreq() call has parameters specific only for current request.
+
+If we need to make a one request come after another one, then we can
+use the next syntax:
+
+  httpreq(REQ_SEQ)
+  
+  where:
+  
+  REQ_SEQ    is a sequence of requests packs where a next requests pack
+             are called after a previous one:
+             [REQ_PACK1, REQ_PACK2, ...]
+  REQ_PACK1,
+  REQ_PACK2  is a requests pack where requests are called in parallel:
+             [REQ1, REQ2, ...]
+
+E.g. the previous call is equivalent to(and actually converted inside
+the function body to):
+
+  httpreq([[{uri: "/get_data",
+           cb: {_onok: req_ok,
+                _onnotok: req_notok,
+                _onfail: req_onfail.bind(this, "get_data req fail: ")}}]]);
+
+The call sequence of the request:
+
+  httpreq([REQ1, [REQ2, REQ3], [REQ4], [REQ5, REQ6]])
+
+is:
+  - do REQ1(converted to [REQ1]);
+  - after REQ1 is done(load event is fired), do REQ2 and REQ3;
+  - after REQ2 and REQ3 is done, do REQ4;
+  - after REQ4 is done, do REQ5 and REQ6.
+
+Moreover, we can use custom callbacks in the requests sequence,
+which would be called between requests packs firing. Like this:
+
+  httpreq([CB1, REQ1, [REQ2, REQ3], CB2, [REQ4], [REQ5, REQ6], CB3])
+
+is:
+  - call CB1;
+  - after CB1 is returned, do REQ1(converted to [REQ1]);
+  - after REQ1 is done(load event is fired), do REQ2 and REQ3;
+  - after REQ2 and REQ3 is done, call CB2;
+  - after CB2 is retured, do REQ4;
+  - after REQ4 is done, do REQ5 and REQ6;
+  - after REQ5 and REQ6 is done, call CB3.
+
+With requests sequence and callbacks we can implement complex
+request scenarios.
 
 Also, some error messages can be modified - look at httpreq.err_msg object.
 
