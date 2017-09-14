@@ -31,6 +31,12 @@ loop(Req, DocRoot) ->
         		Req:serve_file(Path, DocRoot);
         	{"test/get", 'GET'} ->
         		test_web_test:get(Req);
+        	{"test/get/0", 'GET'} ->
+        		test_web_test:get(Req);
+        	{"test/get/1", 'GET'} ->
+        		test_web_test:get(Req);
+        	{"test/get/2", 'GET'} ->
+        		test_web_test:get(Req);
         	{"test/head", 'HEAD'} ->
         		test_web_test:head(Req);
         	{"test/post", 'POST'} ->
@@ -41,7 +47,19 @@ loop(Req, DocRoot) ->
         		test_web_test:delete(Req);
         	{"test/get_timeout", 'GET'} ->
         		test_web_test:get_timeout(Req);
-        	{"test/head_timeout", 'HEAD'} ->
+        	{"test/get_timeout/0", 'GET'} ->
+        		test_web_test:get_timeout(Req);
+         {"test/get_timeout/1", 'GET'} ->
+        		test_web_test:get_timeout(Req);
+        	{"test/get_timeout/2", 'GET'} ->
+        		test_web_test:get_timeout(Req);
+        	{"test/get_timeout/3", 'GET'} ->
+        		test_web_test:get_timeout(Req);
+        	{"test/get_timeout/4", 'GET'} ->
+        		test_web_test:get_timeout(Req);
+        	{"test/get_timeout/5", 'GET'} ->
+        		test_web_test:get_timeout(Req);
+       	{"test/head_timeout", 'HEAD'} ->
         		test_web_test:head_timeout(Req);
         	{"test/post_timeout", 'POST'} ->
         		test_web_test:post_timeout(Req);
