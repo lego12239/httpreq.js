@@ -97,7 +97,7 @@ httpreq.req_done = function (rpacks, i, j)
 	//console.log("req " + i + "." + j + " is done");
 	rpacks[i].sem--;
 	if ((rpacks[i].sem == 0) && ((i + 1) < rpacks.length))
-		httpreq.rpack_do(rpacks, i + 1, 0);
+		httpreq.rpack_do(rpacks, i + 1);
 }
 
 httpreq.rpack_do = function (rpacks, i)
