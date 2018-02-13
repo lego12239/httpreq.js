@@ -604,6 +604,12 @@
 			uri: '/test/get',
 			fun: test_rseq11},
 		{
+			id: "unit92",
+			title: "Test requests sequence with 3 rpacks & return false",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_rseq12},
+		{
 			id: "unit9999",
 			title: "Just wait a minute(we must collect fails if any)",
 			method: '',
@@ -2240,7 +2246,76 @@
 			return false;
 		}
 	}
-	function test_rseq11_onload(test, idx)
+	function test_rseq12(test)
+	{
+		counters.priv[test.id] = 3;
+		
+		httpreq([
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: test_rseq12_onload.bind(this, test, 0),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: test_rseq12_onload.bind(this, test, 1),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: test_rseq12_onload.bind(this, test, 2),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test),
+				onloadstart: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test),
+				onloadstart: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test),
+				onloadstart: report_fail.bind(this, test)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test),
+				onloadstart: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test),
+				onloadstart: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test),
+				onloadstart: report_fail.bind(this, test)}}]]);
+	}
+	function test_rseq12_onload(test, idx)
 	{
 		counters.priv[test.id]--;
 		if (counters.priv[test.id] < 0)

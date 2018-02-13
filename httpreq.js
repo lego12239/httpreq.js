@@ -314,8 +314,8 @@ httpreq.o.prototype.onload = function (ev)
 
 	if ( this.r.readyState == 4 ) {
 		if ( this.p.ok_rex.test(this.r.status) ) {
-			this.onok();
-			this.on_reqok();
+			if (this.onok() != false)
+				this.on_reqok();
 		} else
 			return this.onnotok();
 	} else
