@@ -306,8 +306,11 @@ httpreq.o.prototype.onload = function (ev)
 
 	this._dbg_out("onload()", ev);
 
-	if ( this.p.cb.onload != undefined )
-		return this.p.cb.onload(ev);
+	if ( this.p.cb.onload != undefined ) {
+		if (this.p.cb.onload(ev) != false)
+			this.on_reqok();
+		return;
+	}
 
 	if ( this.r.readyState == 4 ) {
 		if ( this.p.ok_rex.test(this.r.status) ) {

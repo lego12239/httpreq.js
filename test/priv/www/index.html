@@ -591,6 +591,19 @@
 			uri_t: '/test/get_timeout',
 			fun: test_rseq_fail2},
 		{
+			id: "unit90",
+			title: "Test requests sequence with 3 rpacks & onload",
+			method: 'GET',
+			uri: '/test/get',
+			uri_t: '/test/get_timeout',
+			fun: test_rseq10},
+		{
+			id: "unit91",
+			title: "Test requests sequence with 3 rpacks & onload return false",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_rseq11},
+		{
 			id: "unit9999",
 			title: "Just wait a minute(we must collect fails if any)",
 			method: '',
@@ -2030,6 +2043,206 @@
 		if (err.name != "httpreq.timeout")
 			report_fail(test);
 		report_ok(test);
+	}
+	function test_rseq10(test)
+	{
+		counters.priv[test.id] = [1, 1, 1, 1, 1, 1, 1, 1, 1];
+		
+		httpreq([
+			[{
+			 method: test.method,
+			 uri: test.uri_t,
+			 cb: {
+				onload: test_rseq10_onload.bind(this, test, 0),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri_t,
+			 cb: {
+				onload: test_rseq10_onload.bind(this, test, 1),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri_t,
+			 cb: {
+				onload: test_rseq10_onload.bind(this, test, 2),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onload: test_rseq10_onload.bind(this, test, 3),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq10_onloadstart.bind(this, test, 3)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onload: test_rseq10_onload.bind(this, test, 4),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq10_onloadstart.bind(this, test, 4)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onload: test_rseq10_onload.bind(this, test, 5),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq10_onloadstart.bind(this, test, 5)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onload: test_rseq10_onload.bind(this, test, 6),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq10_onloadstart.bind(this, test, 6)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onload: test_rseq10_onload.bind(this, test, 7),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq10_onloadstart.bind(this, test, 7)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onload: test_rseq10_onload.bind(this, test, 8),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq10_onloadstart.bind(this, test, 8)}}]]);
+	}
+	function test_rseq10_onloadstart(test, idx)
+	{
+		if (((idx == 3) || (idx == 4) || (idx == 5)) &&
+		    ((counters.priv[test.id][0] != 0) ||
+		     (counters.priv[test.id][1] != 0) ||
+		     (counters.priv[test.id][2] != 0)))
+			return report_fail(test);
+		if (((idx == 6) || (idx == 7) || (idx == 8)) &&
+		    ((counters.priv[test.id][0] != 0) ||
+		     (counters.priv[test.id][1] != 0) ||
+		     (counters.priv[test.id][2] != 0) ||
+		     (counters.priv[test.id][3] != 0) ||
+		     (counters.priv[test.id][4] != 0) ||
+		     (counters.priv[test.id][5] != 0)))
+			return report_fail(test);
+	}
+	function test_rseq10_onload(test, idx)
+	{
+		counters.priv[test.id][idx]--;
+		if (counters.priv[test.id][idx] < 0)
+			return report_fail(test);
+		if (((idx == 0) || (idx == 1) || (idx == 2)) &&
+		    ((counters.priv[test.id][3] != 1) ||
+		     (counters.priv[test.id][4] != 1) ||
+		     (counters.priv[test.id][5] != 1)))
+			return report_fail(test);
+		if (((idx == 3) || (idx == 4) || (idx == 5)) &&
+		    ((counters.priv[test.id][6] != 1) ||
+		     (counters.priv[test.id][7] != 1) ||
+		     (counters.priv[test.id][8] != 1)))
+			return report_fail(test);
+		if ((counters.priv[test.id][0] == 0) &&
+		    (counters.priv[test.id][1] == 0) &&
+		    (counters.priv[test.id][2] == 0) &&
+		    (counters.priv[test.id][3] == 0) &&
+		    (counters.priv[test.id][4] == 0) &&
+		    (counters.priv[test.id][5] == 0) &&
+		    (counters.priv[test.id][6] == 0) &&
+		    (counters.priv[test.id][7] == 0) &&
+		    (counters.priv[test.id][8] == 0))
+			report_ok(test);			
+	}
+	function test_rseq11(test)
+	{
+		counters.priv[test.id] = 3;
+		
+		httpreq([
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onload: test_rseq11_onload.bind(this, test, 0),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onload: test_rseq11_onload.bind(this, test, 1),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onload: test_rseq11_onload.bind(this, test, 2),
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq11_onloadstart.bind(this, test, 3)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq11_onloadstart.bind(this, test, 4)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq11_onloadstart.bind(this, test, 5)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq11_onloadstart.bind(this, test, 6)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq11_onloadstart.bind(this, test, 7)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				onerror: report_fail.bind(this, test),
+				onabort: report_fail.bind(this, test),
+				onloadstart: test_rseq11_onloadstart.bind(this, test, 8)}}]]);
+	}
+	function test_rseq11_onloadstart(test, idx)
+	{
+		report_fail(test);
+	}
+	function test_rseq11_onload(test, idx)
+	{
+		counters.priv[test.id]--;
+		if (counters.priv[test.id] < 0)
+			return report_fail(test);
+		if (counters.priv[test.id] == 0) {
+			report_ok(test);
+			return false;
+		}
 	}
 	function collect_fails(test)
 	{
