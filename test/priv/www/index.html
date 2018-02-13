@@ -411,6 +411,12 @@
 			fun: test_onok_data},
 		{
 			id: "unit62",
+			title: "Test GET _onok data(ok_rex = /^4\\d\\d$/)",
+			method: 'GET',
+			uri: '/test/get_err',
+			fun: test_onok400_data},
+		{
+			id: "unit63",
 			title: "Test GET _onnotok data(400 some_err)",
 			method: 'GET',
 			uri: '/test/get_err',
@@ -418,7 +424,7 @@
 			err_name: "some_err",
 			fun: test_onnotok_data},
 		{
-			id: "unit63",
+			id: "unit64",
 			title: "Test HEAD _onnotok data(400 some_err)",
 			method: 'HEAD',
 			uri: '/test/head_err',
@@ -426,7 +432,7 @@
 			err_name: "some_err",
 			fun: test_onnotok_data},
 		{
-			id: "unit64",
+			id: "unit65",
 			title: "Test POST _onnotok data(400 some_err)",
 			method: 'POST',
 			uri: '/test/post_err',
@@ -434,7 +440,7 @@
 			err_name: "some_err",
 			fun: test_onnotok_data},
 		{
-			id: "unit65",
+			id: "unit66",
 			title: "Test PUT _onnotok data(400 some_err)",
 			method: 'PUT',
 			uri: '/test/put_err',
@@ -442,7 +448,7 @@
 			err_name: "some_err",
 			fun: test_onnotok_data},
 		{
-			id: "unit66",
+			id: "unit67",
 			title: "Test DELETE _onnotok data(400 some_err)",
 			method: 'DELETE',
 			uri: '/test/delete_err',
@@ -450,129 +456,135 @@
 			err_name: "some_err",
 			fun: test_onnotok_data},
 		{
-			id: "unit67",
+			id: "unit68",
+			title: "Test GET _onnotok data(ok_rex = /^4\\d\\d$/)",
+			method: 'GET',
+			uri: '/test/get',
+			fun: test_onnotok400_data},
+		{
+			id: "unit69",
 			title: "Test GET _onfail data(timeout)",
 			method: 'GET',
 			uri: '/test/get_timeout',
 			fun: test_onfail_data},
 		{
-			id: "unit68",
+			id: "unit70",
 			title: "Test HEAD _onfail data(timeout)",
 			method: 'HEAD',
 			uri: '/test/head_timeout',
 			fun: test_onfail_data},
 		{
-			id: "unit69",
+			id: "unit71",
 			title: "Test POST _onfail data(timeout)",
 			method: 'POST',
 			uri: '/test/post_timeout',
 			fun: test_onfail_data},
 		{
-			id: "unit70",
+			id: "unit72",
 			title: "Test PUT _onfail data(timeout)",
 			method: 'PUT',
 			uri: '/test/put_timeout',
 			fun: test_onfail_data},
 		{
-			id: "unit71",
+			id: "unit73",
 			title: "Test DELETE _onfail data(timeout)",
 			method: 'DELETE',
 			uri: '/test/delete_timeout',
 			fun: test_onfail_data},
 		{
-			id: "unit72",
+			id: "unit74",
 			title: "Test GET events firing order",
 			method: 'GET',
 			uri: '/test/get',
 			fun: test_get_events_order},
 		{
-			id: "unit73",
+			id: "unit75",
 			title: "Test HEAD events firing order",
 			method: 'HEAD',
 			uri: '/test/head',
 			fun: test_head_events_order},
 		{
-			id: "unit74",
+			id: "unit76",
 			title: "Test POST events firing order",
 			method: 'POST',
 			uri: '/test/post',
 			fun: test_post_events_order},
 		{
-			id: "unit75",
+			id: "unit77",
 			title: "Test PUT events firing order",
 			method: 'PUT',
 			uri: '/test/put',
 			fun: test_put_events_order},
 		{
-			id: "unit76",
+			id: "unit78",
 			title: "Test DELETE events firing order",
 			method: 'DELETE',
 			uri: '/test/delete',
 			fun: test_delete_events_order},
 		{
-			id: "unit77",
+			id: "unit79",
 			title: "Test requests sequence with 1 rpack with 1 reqs",
 			method: 'GET',
 			uri: '/test/get',
 			fun: test_rseq1},
 		{
-			id: "unit78",
+			id: "unit80",
 			title: "Test requests sequence with 1 rpack with 2 reqs",
 			method: 'GET',
 			uri: '/test/get',
 			fun: test_rseq2},
 		{
-			id: "unit79",
+			id: "unit81",
 			title: "Test requests sequence with 1 rpack with 3 reqs",
 			method: 'GET',
 			uri: '/test/get',
 			fun: test_rseq3},
 		{
-			id: "unit80",
+			id: "unit82",
 			title: "Test requests sequence with 2 rpacks",
 			method: 'GET',
 			uri: '/test/get',
 			fun: test_rseq4},
 		{
-			id: "unit81",
+			id: "unit83",
 			title: "Test requests sequence with 3 rpacks",
 			method: 'GET',
 			uri: '/test/get',
 			uri_t: '/test/get_timeout',
 			fun: test_rseq5},
 		{
-			id: "unit82",
+			id: "unit84",
 			title: "Test requests sequence with 3 rpacks and callback at start",
 			method: 'GET',
 			uri: '/test/get',
 			fun: test_rseq6},
 		{
-			id: "unit83",
+			id: "unit85",
 			title: "Test requests sequence with 3 rpacks and callback at end",
 			method: 'GET',
 			uri: '/test/get',
 			fun: test_rseq7},
 		{
-			id: "unit84",
+			id: "unit86",
 			title: "Test requests sequence with 3 rpacks and callback at middle",
 			method: 'GET',
 			uri: '/test/get',
 			fun: test_rseq8},
 		{
-			id: "unit85",
+			id: "unit87",
 			title: "Test requests sequence with 3 rpacks and callbacks",
 			method: 'GET',
 			uri: '/test/get',
 			fun: test_rseq9},
 		{
-			id: "unit86",
+			id: "unit88",
 			title: "Test requests sequence with 3 rpacks with fail in first",
 			method: 'GET',
 			uri: '/test/get',
 			uri_err: '/test/get_err',
 			fun: test_rseq_fail1},
 		{
-			id: "unit87",
+			id: "unit89",
 			title: "Test requests sequence with 3 rpacks with timeout in first",
 			method: 'GET',
 			uri: '/test/get',
@@ -911,6 +923,17 @@
 			return report_ok(test);
 		report_fail(test);
 	}
+	function test_onok400_data(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			ok_rex: /^4\d\d$/,
+			cb: {
+				_onok: test_onok_data_onok.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
+	}
 	function test_onnotok_data(test)
 	{
 		httpreq({
@@ -943,6 +966,17 @@
 		    (err.message == "delete_resp"))
 			return report_ok(test);
 		report_fail(test);
+	}
+	function test_onnotok400_data(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			ok_rex: /^4\d\d$/,
+			cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_ok.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
 	}
 	function test_onfail_data(test)
 	{
@@ -2003,7 +2037,7 @@
 	}
 	function collect_fails_do(test)
 	{
-		var tests_to_check = ["unit72", "unit73", "unit74", "unit75", "unit76"];
+		var tests_to_check = ["unit74", "unit75", "unit76", "unit77", "unit78"];
 		var priv;
 		var i, j;
 		
