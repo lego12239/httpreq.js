@@ -122,7 +122,8 @@ use the next syntax:
   where:
   
   REQ_SEQ    is a sequence of requests packs where a next requests pack
-             are called after a previous one:
+             are called after a previous one _successfuly_ finished(_onok
+			 callbacks are called):
              [REQ_PACK1, REQ_PACK2, ...]
   REQ_PACK1,
   REQ_PACK2  is a requests pack where requests are called in parallel:
