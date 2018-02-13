@@ -565,6 +565,20 @@
 			uri: '/test/get',
 			fun: test_rseq9},
 		{
+			id: "unit86",
+			title: "Test requests sequence with 3 rpacks with fail in first",
+			method: 'GET',
+			uri: '/test/get',
+			uri_err: '/test/get_err',
+			fun: test_rseq_fail1},
+		{
+			id: "unit87",
+			title: "Test requests sequence with 3 rpacks with timeout in first",
+			method: 'GET',
+			uri: '/test/get',
+			uri_t: '/test/get_timeout',
+			fun: test_rseq_fail2},
+		{
 			id: "unit9999",
 			title: "Just wait a minute(we must collect fails if any)",
 			method: '',
@@ -1836,6 +1850,152 @@
 		counters.priv[test.id].rc[idx]--;
 		if (counters.priv[test.id].rc[idx] < 0)
 			return report_fail(test);
+	}
+	function test_rseq_fail1(test)
+	{
+		httpreq([
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri_err,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: test_rseq_fail1_onnotok.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}}],
+			{cb: report_fail.bind(this, test)}]);
+	}
+	function test_rseq_fail1_onnotok(test, err)
+	{
+		if ((err.code != "400") ||
+		    (err.name != "some_err"))
+			report_fail(test);
+		report_ok(test);
+	}
+	function test_rseq_fail2(test)
+	{
+		httpreq([
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri_t,
+			 timeout: 1000,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: test_rseq_fail2_onfail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}}],
+			[{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}},
+			{
+			 method: test.method,
+			 uri: test.uri,
+			 cb: {
+				_onok: report_fail.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}}],
+			{cb: report_fail.bind(this, test)}]);
+	}
+	function test_rseq_fail2_onfail(test, err)
+	{
+		if (err.name != "httpreq.timeout")
+			report_fail(test);
+		report_ok(test);
 	}
 	function collect_fails(test)
 	{

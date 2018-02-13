@@ -39,8 +39,8 @@ function httpreq(p_)
 		else
 			for(j = 0; j < reqs.length; j++) {
 				rpacks[i].reqs[j] = new httpreq.o(reqs[j]);
-				rpacks[i].reqs[j].r.addEventListener("load",
-				  httpreq.req_done.bind(this, rpacks, i, j));
+				rpacks[i].reqs[j].on_reqok =
+				  httpreq.req_done.bind(this, rpacks, i, j);
 			}
 		rpacks[i].sem = reqs.length;
 	}
@@ -311,7 +311,8 @@ httpreq.o.prototype.onload = function (ev)
 
 	if ( this.r.readyState == 4 ) {
 		if ( this.p.ok_rex.test(this.r.status) ) {
-			return this.onok();
+			this.onok();
+			this.on_reqok();
 		} else
 			return this.onnotok();
 	} else
