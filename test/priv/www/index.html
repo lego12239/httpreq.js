@@ -1056,7 +1056,7 @@
 	function test_post_events_order(test)
 	{
 		counters.priv[test.id] = {
-			order_must: /^loadstart-u_loadstart(-u_progress)*(-u_load-u_loadend)?(-progress)*-load-loadend$/,
+			order_must: /^loadstart(-u_loadstart)?(-u_progress)*(-u_load-u_loadend)?(-progress)*-load-loadend$/,
 			order_real: ""};
 		
 		httpreq({
@@ -1088,7 +1088,7 @@
 	function test_put_events_order(test)
 	{
 		counters.priv[test.id] = {
-			order_must: /^loadstart-u_loadstart(-u_progress)*(-u_load-u_loadend)?(-progress)*-load-loadend$/,
+			order_must: /^loadstart(-u_loadstart)?(-u_progress)*(-u_load-u_loadend)?(-progress)*-load-loadend$/,
 			order_real: ""};
 		
 		httpreq({
