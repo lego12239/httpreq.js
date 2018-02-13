@@ -238,9 +238,6 @@ httpreq.o.prototype.u_onload = function (ev)
 
 	if ( this.p.cb.u_onload != undefined )
 		return this.p.cb.u_onload(ev);
-
-	/* WHAT IS MUST BE HERE? */
-
 }
 
 httpreq.o.prototype.u_onloadstart = function (ev)
