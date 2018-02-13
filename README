@@ -149,7 +149,8 @@ is:
 Moreover, we can use custom callbacks in the requests sequence,
 which would be called between requests packs firing. Like this:
 
-  httpreq([CB1, REQ1, [REQ2, REQ3], CB2, [REQ4], [REQ5, REQ6], CB3])
+  httpreq([{cb: CB1}, REQ1, [REQ2, REQ3], {cb: CB2},
+    [REQ4], [REQ5, REQ6], {cb: CB3}])
 
 is:
   - call CB1;
