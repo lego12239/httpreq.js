@@ -58,7 +58,7 @@ httpreq.p = {
 	data: {},
 	resptype: "text",
 	timeout: 0,
-	ok_rex: /2\d\d/,
+	ok_rex: /^2\d\d$/,
 	cb: {
 		_onok: undefined,
 		_onnotok: undefined,
