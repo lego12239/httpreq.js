@@ -107,8 +107,8 @@ httpreq.rpack_do = function (rpacks, i)
 	//console.log("do rpack " + i);
 	if ((rpacks[i].reqs.length == 1) &&
 	    !(rpacks[i].reqs[0] instanceof httpreq.o)) {
-		rpacks[i].reqs[0].cb();
-		httpreq.req_done(rpacks, i, 0);
+		if (rpacks[i].reqs[0].cb() != false)
+			httpreq.req_done(rpacks, i, 0);
 	} else {
 		for(j = 0; j < rpacks[i].reqs.length; j++)
 			rpacks[i].reqs[j].go();
