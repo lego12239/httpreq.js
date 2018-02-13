@@ -15,21 +15,18 @@ function init()
 	/* hide busy indicator on every response or request error.
 	   so, we must not do this ourselves in every onok, onnotok and onfail
 	   callbacks. */
-	httpreq.p.cb.d.onloadend = req_onloadend;
-	/* we must specify ontimeout callback, because on timeout event
-	   loadend callback is not called by XMLHttpRequest */
-	httpreq.p.cb.d.ontimeout = req_ontimeout;
+	httpreq.p.cb.onloadstart = req_onloadstart;
+	httpreq.p.cb.onloadend = req_onloadend;
 
 	load_data();
 }
 
 function load_data()
 {
-	busyi.show();
 	httpreq({uri: "/data",
-	         cb: {onok: load_data_onok,
-	              onnotok: load_data_onnotok,
-	              onfail: show_err.bind(this, "Data loading is failed: ")}});
+	         cb: {_onok: load_data_onok,
+	              _onnotok: load_data_onnotok,
+	              _onfail: show_err.bind(this, "Data loading is failed: ")}});
 }
 
 function load_data_onok(data)
@@ -51,19 +48,16 @@ function show_err(prefix, err)
 	el.style.display = "block";
 }
 
+function req_onloadstart(ev)
+{
+	busyi.show();
+}
+
 function req_onloadend(ev)
 {
 	busyi.hide();
 }
 
-function req_ontimeout(ev)
-{
-	/* Duplicate onloadend callback */
-	busyi.hide();
-	/* Duplicate onfail callback actions, because we specified ontimeout
-	   callback, so onfail callback isn't called on timeout event. */
-	show_err("", new Error("Data loading timed out"));
-}
 </script>
 </head>
 <body onload="init()">
