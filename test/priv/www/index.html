@@ -2193,46 +2193,52 @@
 			 cb: {
 				onerror: report_fail.bind(this, test),
 				onabort: report_fail.bind(this, test),
-				onloadstart: test_rseq11_onloadstart.bind(this, test, 3)}},
+				onloadstart: report_fail.bind(this, test)}},
 			{
 			 method: test.method,
 			 uri: test.uri,
 			 cb: {
 				onerror: report_fail.bind(this, test),
 				onabort: report_fail.bind(this, test),
-				onloadstart: test_rseq11_onloadstart.bind(this, test, 4)}},
+				onloadstart: report_fail.bind(this, test)}},
 			{
 			 method: test.method,
 			 uri: test.uri,
 			 cb: {
 				onerror: report_fail.bind(this, test),
 				onabort: report_fail.bind(this, test),
-				onloadstart: test_rseq11_onloadstart.bind(this, test, 5)}}],
+				onloadstart: report_fail.bind(this, test)}}],
 			[{
 			 method: test.method,
 			 uri: test.uri,
 			 cb: {
 				onerror: report_fail.bind(this, test),
 				onabort: report_fail.bind(this, test),
-				onloadstart: test_rseq11_onloadstart.bind(this, test, 6)}},
+				onloadstart: report_fail.bind(this, test)}},
 			{
 			 method: test.method,
 			 uri: test.uri,
 			 cb: {
 				onerror: report_fail.bind(this, test),
 				onabort: report_fail.bind(this, test),
-				onloadstart: test_rseq11_onloadstart.bind(this, test, 7)}},
+				onloadstart: report_fail.bind(this, test)}},
 			{
 			 method: test.method,
 			 uri: test.uri,
 			 cb: {
 				onerror: report_fail.bind(this, test),
 				onabort: report_fail.bind(this, test),
-				onloadstart: test_rseq11_onloadstart.bind(this, test, 8)}}]]);
+				onloadstart: report_fail.bind(this, test)}}]]);
 	}
-	function test_rseq11_onloadstart(test, idx)
+	function test_rseq11_onload(test, idx)
 	{
-		report_fail(test);
+		counters.priv[test.id]--;
+		if (counters.priv[test.id] < 0)
+			return report_fail(test);
+		if (counters.priv[test.id] == 0) {
+			report_ok(test);
+			return false;
+		}
 	}
 	function test_rseq11_onload(test, idx)
 	{
