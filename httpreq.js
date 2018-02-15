@@ -220,7 +220,7 @@ httpreq.o.prototype.u_onabort = function (ev)
 
 
 	if ( this.p.cb.u_onabort != undefined )
-		return this.p.cb.u_onabort(ev);
+		this.p.cb.u_onabort(ev);
 }
 
 httpreq.o.prototype.u_onerror = function (ev)
@@ -229,7 +229,7 @@ httpreq.o.prototype.u_onerror = function (ev)
 		ev);
 
 	if ( this.p.cb.u_onerror != undefined )
-		return this.p.cb.u_onerror(ev);
+		this.p.cb.u_onerror(ev);
 }
 
 httpreq.o.prototype.u_onload = function (ev)
@@ -237,7 +237,7 @@ httpreq.o.prototype.u_onload = function (ev)
 	this._dbg_out("u_onload()", ev);
 
 	if ( this.p.cb.u_onload != undefined )
-		return this.p.cb.u_onload(ev);
+		this.p.cb.u_onload(ev);
 }
 
 httpreq.o.prototype.u_onloadstart = function (ev)
@@ -245,7 +245,7 @@ httpreq.o.prototype.u_onloadstart = function (ev)
 	this._dbg_out("u_onloadstart()", ev);
 
 	if ( this.p.cb.u_onloadstart != undefined )
-		return this.p.cb.u_onloadstart(ev);
+		this.p.cb.u_onloadstart(ev);
 }
 
 httpreq.o.prototype.u_onprogress = function (ev)
@@ -258,7 +258,7 @@ httpreq.o.prototype.u_onprogress = function (ev)
 	this._dbg_out("u_onprogress()", ev);
 
 	if ( this.p.cb.u_onprogress != undefined )
-		return this.p.cb.u_onprogress(ev);
+		this.p.cb.u_onprogress(ev);
 }
 
 httpreq.o.prototype.u_ontimeout = function (ev)
@@ -266,7 +266,7 @@ httpreq.o.prototype.u_ontimeout = function (ev)
 	this._dbg_out("u_ontimeout()", ev);
 
 	if ( this.p.cb.u_ontimeout != undefined )
-		return this.p.cb.u_ontimeout(ev);
+		this.p.cb.u_ontimeout(ev);
 }
 
 httpreq.o.prototype.u_onloadend = function (ev)
@@ -274,7 +274,7 @@ httpreq.o.prototype.u_onloadend = function (ev)
 	this._dbg_out("u_onloadend()", ev);
 
 	if ( this.p.cb.u_onloadend != undefined )
-		return this.p.cb.u_onloadend(ev);
+		this.p.cb.u_onloadend(ev);
 }
 
 httpreq.o.prototype.onabort = function (ev)
@@ -282,8 +282,10 @@ httpreq.o.prototype.onabort = function (ev)
 	this._dbg_out("onabort()", ev);
 
 
-	if ( this.p.cb.onabort != undefined )
-		return this.p.cb.onabort(ev);
+	if ( this.p.cb.onabort != undefined ) {
+		this.p.cb.onabort(ev);
+		return;
+	}
 
 	this.onfail("abort");
 }
@@ -293,8 +295,10 @@ httpreq.o.prototype.onerror = function (ev)
 	this._dbg_out("onerror(): " + this.r.status + ": " + this.r.statusText,
 		ev);
 
-	if ( this.p.cb.onerror != undefined )
-		return this.p.cb.onerror(ev);
+	if ( this.p.cb.onerror != undefined ) {
+		this.p.cb.onerror(ev);
+		return;
+	}
 
 	this.onfail("error", [this.r.status, this.r.statusText]);
 }
@@ -317,9 +321,9 @@ httpreq.o.prototype.onload = function (ev)
 			if (this.onok() != false)
 				this.on_reqok();
 		} else
-			return this.onnotok();
+			this.onnotok();
 	} else
-		return this.onfail("readyState_err", ["readyState is not 4!"]);
+		this.onfail("readyState_err", ["readyState is not 4!"]);
 }
 
 httpreq.o.prototype.onloadstart = function (ev)
@@ -327,7 +331,7 @@ httpreq.o.prototype.onloadstart = function (ev)
 	this._dbg_out("onloadstart(): ", ev);
 
 	if ( this.p.cb.onloadstart != undefined )
-		return this.p.cb.onloadstart(ev);
+		this.p.cb.onloadstart(ev);
 }
 
 httpreq.o.prototype.onprogress = function (ev)
@@ -340,15 +344,17 @@ httpreq.o.prototype.onprogress = function (ev)
 	this._dbg_out("onprogress()", ev);
 
 	if ( this.p.cb.onprogress != undefined )
-		return this.p.cb.onprogress(ev);
+		this.p.cb.onprogress(ev);
 }
 
 httpreq.o.prototype.ontimeout = function (ev)
 {
 	this._dbg_out("ontimeout()", ev);
 
-	if ( this.p.cb.ontimeout != undefined )
-		return this.p.cb.ontimeout(ev);
+	if ( this.p.cb.ontimeout != undefined ) {
+		this.p.cb.ontimeout(ev);
+		return;
+	}
 
 	this.onfail("timeout");
 }
@@ -358,7 +364,7 @@ httpreq.o.prototype.onloadend = function (ev)
 	this._dbg_out("onloadend()", ev);
 
 	if ( this.p.cb.onloadend != undefined )
-		return this.p.cb.onloadend(ev);
+		this.p.cb.onloadend(ev);
 }
 
 httpreq.o.prototype.onok = function ()
