@@ -7,54 +7,54 @@
 -include_lib("csv/include/csv.hrl").
 
 get(Req) ->
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], "get_resp"}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "get_resp"}).
 
 head(Req) ->
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], ""}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], ""}).
 
 post(Req) ->
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], "post_resp"}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "post_resp"}).
 
 put(Req) ->
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], "put_resp"}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "put_resp"}).
 
 delete(Req) ->
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], "delete_resp"}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "delete_resp"}).
 
 get_err(Req) ->
-	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}], "get_resp"}).
+	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "get_resp"}).
 
 head_err(Req) ->
-	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}], ""}).
+	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], ""}).
 
 post_err(Req) ->
-	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}], "post_resp"}).
+	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "post_resp"}).
 
 put_err(Req) ->
-	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}], "put_resp"}).
+	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "put_resp"}).
 
 delete_err(Req) ->
-	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}], "delete_resp"}).
+	Req:respond({"400 some_err", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "delete_resp"}).
 
 get_timeout(Req) ->
 	timer:sleep(4000),
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], "get_resp"}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "get_resp"}).
 
 head_timeout(Req) ->
 	timer:sleep(4000),
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], ""}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], ""}).
 
 post_timeout(Req) ->
 	timer:sleep(4000),
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], "post_resp"}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "post_resp"}).
 
 put_timeout(Req) ->
 	timer:sleep(4000),
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], "put_resp"}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "put_resp"}).
 
 delete_timeout(Req) ->
 	timer:sleep(4000),
-	Req:respond({"200 ok", [{"Content-Type", "text/plain"}], "delete_resp"}).
+	Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "delete_resp"}).
 
 save(Req) ->
 	Prms = Req:parse_post(),
