@@ -123,7 +123,7 @@ use the next syntax:
   
   REQ_SEQ    is a sequence of requests packs where a next requests pack
              are called after a previous one _successfuly_ finished(_onok
-			 callbacks are called):
+			 callbacks or onload callbacks are called):
              [REQ_PACK1, REQ_PACK2, ...]
   REQ_PACK1,
   REQ_PACK2  is a requests pack where requests are called in parallel:
@@ -161,6 +161,11 @@ is:
   - after CB2 is retured, do REQ4;
   - after REQ4 is done, do REQ5 and REQ6;
   - after REQ5 and REQ6 is done, call CB3.
+
+Next REQ_PACK is called only if REQS in previous REQ_PACK is
+successfuly finished(_onok callbacks or onload callbacks are called).
+Also, we can terminate REQ_SEQ with "return false" in REQ_SEQ callback
+or in onload callback or in _onok callback.
 
 With requests sequence and callbacks we can implement complex
 request scenarios.
