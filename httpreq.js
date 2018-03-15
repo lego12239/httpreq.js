@@ -602,7 +602,7 @@ httpreq.o.prototype.__fmt_prms_multipart = function (prms)
 
 
 	boundary = this.__mk_multipart_boundary(prms);
-	res = "--" + boundary;
+	res = "--" + boundary + "\r\n";
 	res += prms.join("--" + boundary + "\r\n");
 	res += "--" + boundary + "--\r\n";
 
