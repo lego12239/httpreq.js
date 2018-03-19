@@ -147,11 +147,11 @@ is:
   - after REQ2 and REQ3 is done, do REQ4;
   - after REQ4 is done, do REQ5 and REQ6.
 
-Moreover, we can use custom callbacks in the requests sequence,
+Moreover, we can insert functions in the requests sequence,
 which would be called between requests packs firing. Like this:
 
-  httpreq([{cb: CB1}, REQ1, [REQ2, REQ3], {cb: CB2},
-    [REQ4], [REQ5, REQ6], {cb: CB3}])
+  httpreq([CB1, REQ1, [REQ2, REQ3], CB2,
+    [REQ4], [REQ5, REQ6], CB3])
 
 is:
   - call CB1;

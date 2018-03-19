@@ -33,8 +33,7 @@ function httpreq(p_)
 			reqs = p[i];
 		rpacks[i] = {reqs: [], sem: 0};
 		if ((reqs.length == 1) &&
-		    (reqs[0].uri == null) &&
-		    (reqs[0].cb != null))
+		    (Object.prototype.toString.call(reqs[0]) == "[object Function]"))
 			rpacks[i].reqs[0] = reqs[0];
 		else
 			for(j = 0; j < reqs.length; j++) {
@@ -107,7 +106,7 @@ httpreq.rpack_do = function (rpacks, i)
 	//console.log("do rpack " + i);
 	if ((rpacks[i].reqs.length == 1) &&
 	    !(rpacks[i].reqs[0] instanceof httpreq.o)) {
-		if (rpacks[i].reqs[0].cb() != false)
+		if (rpacks[i].reqs[0]() != false)
 			httpreq.req_done(rpacks, i, 0);
 	} else {
 		for(j = 0; j < rpacks[i].reqs.length; j++)
