@@ -151,7 +151,7 @@ httpreq.o.prototype._set_prms = function (p_in)
 	var p, ret;
 
 
-	this.__set_prms(p_in, this.p, httpreq.p);
+	this.__set_prms(this.p, [httpreq.p, p_in]);
 
 	/* json must be processed with a help of JSON.parse(), because IE11- has no
 	   support of responseType='json' */
@@ -165,26 +165,34 @@ httpreq.o.prototype._set_prms = function (p_in)
 	this._check_misspelled(p_in, this.p, "");
 }
 
-httpreq.o.prototype.__set_prms = function (p_in, p_out, p_def)
+httpreq.o.prototype.__set_prms = function (p_out, p_vals)
 {
-	var p, ret;
+	var i, p, ret, vals = [];
 
+	for(i = p_vals.length - 1; i >= 0; i--)
+		if (p_vals[i] == null)
+			p_vals[i] = {};
 
-	if ( p_in == undefined )
-		p_in = {};
-
-	for(p in p_def)
-		if ( Object.prototype.toString.call(p_def[p]) == "[object Object]" ) {
+	for(p in p_vals[0])
+		if ( Object.prototype.toString.call(p_vals[0][p]) == "[object Object]" ) {
 			p_out[p] = {};
-			this.__set_prms(p_in[p], p_out[p], p_def[p]);
+			for(i = p_vals.length - 1; i >= 0; i--)
+				vals[i] = p_vals[i][p];
+			this.__set_prms(p_out[p], vals);
 		} else
-			this._set_prm(p, p_in[p], p_out, p_def);
+			this._set_prm(p, p_out, p_vals);
 }
 
-httpreq.o.prototype._set_prm = function (n, v, p_out, p_def)
+httpreq.o.prototype._set_prm = function (n, p_out, p_vals)
 {
-	if ( v == undefined )
-		v = p_def[n];
+	var i, v;
+	
+	/* assign first available value from the end */
+	for(i = p_vals.length - 1; i >= 0; i--)
+		if (p_vals[i][n] != null) {
+			v = p_vals[i][n];
+			break;
+		}
 
 	p_out[n] = v;
 }
