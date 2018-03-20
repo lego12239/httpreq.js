@@ -50,6 +50,12 @@ data
   For GET, HEAD and DELETE methods data is placed in uri in
   application/x-www-form-urlencoded encoding; for other methods(e.g. PUT and
   POST) data is placed in payload according to specified enctype.
+form
+  form element to send
+  data property must be null if form property is set.
+  method, uri and enctype properties are copied from form attributes.
+  User can override any of this copied properties by specifying it
+  as usual.
 resptype
   a format of a response data that _onok callback waits for
   Accept any values that XMLHttpRequest is supported("text", "json", "document",

@@ -55,6 +55,7 @@ httpreq.p = {
 	headers: {},
 	enctype: "application/x-www-form-urlencoded",
 	data: {},
+	form: null,
 	resptype: "text",
 	timeout: 0,
 	ok_rex: /^2\d\d$/,
@@ -147,10 +148,20 @@ httpreq.o = function (p)
 
 httpreq.o.prototype._set_prms = function (p_in)
 {
-	var p, ret;
+	var p, ret, vals;
 
-
-	this.__set_prms(this.p, [httpreq.p, p_in]);
+	vals = [httpreq.p];
+	if (p_in.form != null) {
+		if (p_in.data != null)
+			throw("httpreq: form & data can't be set together");
+		vals.push({
+			method: p_in.form.method,
+			uri: p_in.form.action,
+			enctype: p_in.form.enctype,
+			data: p_in.form});
+	}
+	vals.push(p_in);
+	this.__set_prms(this.p, vals);
 
 	/* json must be processed with a help of JSON.parse(), because IE11- has no
 	   support of responseType='json' */
@@ -159,27 +170,27 @@ httpreq.o.prototype._set_prms = function (p_in)
 		this.f.json = 1;
 	}
 
-	this.p.data = p_in.data;
-	
 	this._check_misspelled(p_in, this.p, "");
 }
 
 httpreq.o.prototype.__set_prms = function (p_out, p_vals)
 {
-	var i, p, ret, vals = [];
+	var i, p, s, vals = [];
 
 	for(i = p_vals.length - 1; i >= 0; i--)
 		if (p_vals[i] == null)
 			p_vals[i] = {};
 
-	for(p in p_vals[0])
-		if ( Object.prototype.toString.call(p_vals[0][p]) == "[object Object]" ) {
+	for(p in p_vals[0]) {
+		s = Object.prototype.toString.call(p_vals[0][p]);
+		if ((s == "[object Object]") && (p != "data")) {
 			p_out[p] = {};
 			for(i = p_vals.length - 1; i >= 0; i--)
 				vals[i] = p_vals[i][p];
 			this.__set_prms(p_out[p], vals);
 		} else
 			this._set_prm(p, p_out, p_vals);
+	}
 }
 
 httpreq.o.prototype._set_prm = function (n, p_out, p_vals)
@@ -205,6 +216,8 @@ httpreq.o.prototype._check_misspelled = function (p_in, p_ex, parent)
 		p_in = {};
 
 	for(p in p_in) {
+		if (p == "data")
+			continue;
 		if (!p_ex.hasOwnProperty(p))
 			throw("httpreq: unknown parameter name '" + parent + p + "'");
 		if (Object.prototype.toString.call(p_in[p]) == "[object Object]" )
@@ -445,30 +458,12 @@ httpreq.o.prototype.go = function (data)
 	if ( data == undefined )
 		data = this.p.data;
 
-	/* May be data is HTMLFormElement. If so, get from it
-	   method, uri and enctype. */
-	this._set_req_prms(data);
-
 	if (( this.p.method.toUpperCase() == "GET" ) ||
 		( this.p.method.toUpperCase() == "HEAD" ) ||
 		( this.p.method.toUpperCase() == "DELETE" ))
 		this._send_data_in_uri(data);
 	else
 		this._send_data_as_payload(data);
-}
-
-httpreq.o.prototype._set_req_prms = function (data)
-{
-	var otype;
-
-
-	otype = Object.prototype.toString.call(data);
-
-	if ( otype == "[object HTMLFormElement]") {
-		this.p.method = data.method;
-		this.p.uri = data.action;
-		this.p.enctype = data.enctype;
-	}
 }
 
 httpreq.o.prototype._send_data_in_uri = function (data)
@@ -519,19 +514,18 @@ httpreq.o.prototype._send_data_as_payload = function (data)
  */
 httpreq.o.prototype._fmt_data = function (data, enctype)
 {
-	var otype;
-
+	var otype, funs;
 
 	if ( data == undefined )
 		return "";
 
+	funs = this._get_fmt_funs(this.p.enctype);
 	otype = Object.prototype.toString.call(data);
-
 	switch (otype) {
 		case "[object HTMLFormElement]":
-			return this._fmt_data_form(data, this._get_fmt_funs(enctype));
+			return this._fmt_data_form(data, funs);
 		case "[object Object]":
-			return this._fmt_data_obj(data, this._get_fmt_funs(enctype));
+			return this._fmt_data_obj(data, funs);
 		default:
 			/* If data is Blob, FormData, ArrayBufferView and etc */
 			return data;
