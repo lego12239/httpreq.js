@@ -616,6 +616,120 @@
 			uri: '/test/get',
 			fun: test_rseq13},
 		{
+			id: "unit94",
+			title: "Test GET parameters 1",
+			method: 'GET',
+			uri: '/test/get_prms1?p1=val1&p2=val2',
+			data: null,
+			fun: test_prms},
+		{
+			id: "unit95",
+			title: "Test GET parameters 2",
+			method: 'GET',
+			uri: '/test/get_prms1?p1=val1&p2=val2',
+			data: {},
+			fun: test_prms},
+		{
+			id: "unit96",
+			title: "Test GET parameters 3",
+			method: 'GET',
+			uri: '/test/get_prms1',
+			data: {p1: "val1", p2: "val2"},
+			fun: test_prms},
+		{
+			id: "unit97",
+			title: "Test GET parameters 4",
+			method: 'GET',
+			uri: '/test/get_prms1?p2=val2',
+			data: {p1: "val1"},
+			fun: test_prms},
+		{
+			id: "unit98",
+			title: "Test GET parameters 5",
+			method: 'GET',
+			uri: '/test/get_prms2',
+			data: {p1: "val1?=&", p2: "val2?=&#/q"},
+			fun: test_prms},
+		{
+			id: "unit99",
+			title: "Test POST parameters application/x-www-form-urlencoded",
+			method: 'POST',
+			uri: '/test/post_prms1',
+			data: {p1: "val1?=&", p2: "val2?=&#/q"},
+			enctype: "application/x-www-form-urlencoded",
+			fun: test_prms},
+		{
+			id: "unit100",
+			title: "Test POST parameters multipart/form-data",
+			method: 'POST',
+			uri: '/test/post_prms2',
+			data: {p1: "val1?=&", p2: "val2?=&#/q"},
+			enctype: "multipart/form-data",
+			fun: test_prms},
+		{
+			id: "unit101",
+			title: "Test GET parameters (many values)",
+			method: 'GET',
+			uri: '/test/get_prms3',
+			data: {p1: "val1?=&", p2: ["val2?=&#/q", "extraval2&"]},
+			fun: test_prms},
+		{
+			id: "unit102",
+			title: "Test POST parameters (many values) application/x-www-form-urlencoded",
+			method: 'POST',
+			uri: '/test/post_prms3',
+			data: {p1: "val1?=&", p2: ["val2?=&#/q", "extraval2&"]},
+			enctype: "application/x-www-form-urlencoded",
+			fun: test_prms},
+		{
+			id: "unit103",
+			title: "Test POST parameters (many values) multipart/form-data",
+			method: 'POST',
+			uri: '/test/post_prms4',
+			data: {p1: "val1?=&", p2: ["val2?=&#/q", "extraval2&"]},
+			enctype: "multipart/form-data",
+			fun: test_prms},
+		{
+			id: "unit104",
+			title: "Test GET form element",
+			method: 'GET',
+			uri: '/test/get_prms3',
+			enctype: "application/x-www-form-urlencoded",
+			fun: test_prms_form},
+		{
+			id: "unit105",
+			title: "Test POST form element 1",
+			uri: '/test/post_prms3',
+			enctype: "application/x-www-form-urlencoded",
+			fun: test_prms_form},
+		{
+			id: "unit106",
+			title: "Test POST form element 2",
+			uri: '/test/post_prms4',
+			fun: test_prms_form},
+		{
+			id: "unit107",
+			title: "Test POST form element 3",
+			fun: test_prms_form},
+		{
+			id: "unit108",
+			title: "Test GET formData",
+			method: 'GET',
+			uri: '/test/get_prms3',
+			enctype: "application/x-www-form-urlencoded",
+			fun: test_prms_formdata},
+		{
+			id: "unit109",
+			title: "Test POST formData 1",
+			uri: '/test/post_prms3',
+			enctype: "application/x-www-form-urlencoded",
+			fun: test_prms_formdata},
+		{
+			id: "unit110",
+			title: "Test POST formData 2",
+			uri: '/test/post_prms4',
+			fun: test_prms_formdata},
+		{
 			id: "unit9999",
 			title: "Just wait a minute(we must collect fails if any)",
 			method: '',
@@ -1462,7 +1576,7 @@
 			rc: [1, 1, 1, 1, 1, 1, 1, 1, 1]};
 		
 		httpreq([
-			{cb: test_rseq6_cb.bind(this, test)},
+			test_rseq6_cb.bind(this, test),
 			[{
 			 method: test.method,
 			 uri: test.uri,
@@ -1629,7 +1743,7 @@
 				_onok: test_rseq7_onok.bind(this, test, 8),
 				_onnotok: report_fail.bind(this, test),
 				_onfail: report_fail.bind(this, test)}}],
-			{cb: test_rseq7_cb.bind(this, test)}]);
+			test_rseq7_cb.bind(this, test)]);
 	}
 	function test_rseq7_cb(test)
 	{
@@ -1680,7 +1794,7 @@
 				_onok: test_rseq8_onok.bind(this, test, 2),
 				_onnotok: report_fail.bind(this, test),
 				_onfail: report_fail.bind(this, test)}}],
-			{cb: test_rseq8_cb.bind(this, test)},
+			test_rseq8_cb.bind(this, test),
 			[{
 			 method: test.method,
 			 uri: test.uri,
@@ -1763,7 +1877,7 @@
 			rc: [1, 1, 1, 1, 1, 1, 1, 1, 1]};
 		
 		httpreq([
-			{cb: test_rseq9_cb.bind(this, test, 0)},
+			test_rseq9_cb.bind(this, test, 0),
 			[{
 			 method: test.method,
 			 uri: test.uri,
@@ -1785,7 +1899,7 @@
 				_onok: test_rseq9_onok.bind(this, test, 2),
 				_onnotok: report_fail.bind(this, test),
 				_onfail: report_fail.bind(this, test)}}],
-			{cb: test_rseq9_cb.bind(this, test, 1)},
+			test_rseq9_cb.bind(this, test, 1),
 			[{
 			 method: test.method,
 			 uri: test.uri,
@@ -1807,7 +1921,7 @@
 				_onok: test_rseq9_onok.bind(this, test, 5),
 				_onnotok: report_fail.bind(this, test),
 				_onfail: report_fail.bind(this, test)}}],
-			{cb: test_rseq9_cb.bind(this, test, 2)},
+			test_rseq9_cb.bind(this, test, 2),
 			[{
 			 method: test.method,
 			 uri: test.uri,
@@ -1829,7 +1943,7 @@
 				_onok: test_rseq9_onok.bind(this, test, 8),
 				_onnotok: report_fail.bind(this, test),
 				_onfail: report_fail.bind(this, test)}}],
-			{cb: test_rseq9_cb.bind(this, test, 3)}]);
+			test_rseq9_cb.bind(this, test, 3)]);
 	}
 	function test_rseq9_cb(test, idx)
 	{
@@ -1974,7 +2088,7 @@
 				_onok: report_fail.bind(this, test),
 				_onnotok: report_fail.bind(this, test),
 				_onfail: report_fail.bind(this, test)}}],
-			{cb: report_fail.bind(this, test)}]);
+			report_fail.bind(this, test)]);
 	}
 	function test_rseq_fail1_onnotok(test, err)
 	{
@@ -2048,7 +2162,7 @@
 				_onok: report_fail.bind(this, test),
 				_onnotok: report_fail.bind(this, test),
 				_onfail: report_fail.bind(this, test)}}],
-			{cb: report_fail.bind(this, test)}]);
+			report_fail.bind(this, test)]);
 	}
 	function test_rseq_fail2_onfail(test, err)
 	{
@@ -2357,8 +2471,8 @@
 				_onok: test_rseq13_onload.bind(this, test, 2),
 				_onnotok: report_fail.bind(this, test),
 				_onfail: report_fail.bind(this, test)}}],
-			{cb: test_rseq13_cb.bind(this, test)},
-			{cb: report_fail.bind(this, test)},
+			test_rseq13_cb.bind(this, test),
+			report_fail.bind(this, test),
 			[{
 			 method: test.method,
 			 uri: test.uri,
@@ -2415,6 +2529,44 @@
 		report_ok(test);
 		return false;
 	}
+	function test_prms(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			data: test.data,
+			enctype: test.enctype,
+			cb: {
+				_onok: report_ok.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
+	}
+	function test_prms_form(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			form: document.getElementById("form1"),
+			data: test.data,
+			enctype: test.enctype,
+			cb: {
+				_onok: report_ok.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
+	}
+	function test_prms_formdata(test)
+	{
+		httpreq({
+			method: test.method,
+			uri: test.uri,
+			form: new FormData(document.getElementById("form1")),
+			data: test.data,
+			enctype: test.enctype,
+			cb: {
+				_onok: report_ok.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
+	}
 	function collect_fails(test)
 	{
 		setTimeout(collect_fails_do.bind(this, test), 10000);
@@ -2451,6 +2603,14 @@
   </div>
   
   <div id="results">
+  </div>
+  
+  <div style="display: none">
+    <form id="form1" action="/test/post_prms4" enctype="multipart/form-data" method="POST">
+      <input name="p1" value="val1?=&"/>
+      <input name="p2" value="val2?=&#/q"/>
+      <input name="p2" value="extraval2&"/>
+    </form>
   </div>
 </body>
 </html>

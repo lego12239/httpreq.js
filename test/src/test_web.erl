@@ -45,6 +45,20 @@ loop(Req, DocRoot) ->
         		test_web_test:put(Req);
         	{"test/delete", 'DELETE'} ->
         		test_web_test:delete(Req);
+        	{"test/get_prms1", 'GET'} ->
+        		test_web_test:get_prms1(Req);
+        	{"test/get_prms2", 'GET'} ->
+        		test_web_test:get_prms2(Req);
+        	{"test/get_prms3", 'GET'} ->
+        		test_web_test:get_prms3(Req);
+        	{"test/post_prms1", 'POST'} ->
+        		test_web_test:post_prms1(Req);
+        	{"test/post_prms2", 'POST'} ->
+        		test_web_test:post_prms2(Req);
+        	{"test/post_prms3", 'POST'} ->
+        		test_web_test:post_prms3(Req);
+        	{"test/post_prms4", 'POST'} ->
+        		test_web_test:post_prms4(Req);
         	{"test/get_timeout", 'GET'} ->
         		test_web_test:get_timeout(Req);
         	{"test/get_timeout/0", 'GET'} ->
