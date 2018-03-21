@@ -51,11 +51,13 @@ data
   application/x-www-form-urlencoded encoding; for other methods(e.g. PUT and
   POST) data is placed in payload according to specified enctype.
 form
-  form element to send
+  form element to send or formData object
   data property must be null if form property is set.
   method, uri and enctype properties are copied from form attributes.
+  If form is formData object, then method set to "POST" and enctype is
+  set to "multipart/form" by default.
   User can override any of this copied properties by specifying it
-  as usual.
+  explicitly as usual.
 resptype
   a format of a response data that _onok callback waits for
   Accept any values that XMLHttpRequest is supported("text", "json", "document",

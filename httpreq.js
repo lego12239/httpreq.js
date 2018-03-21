@@ -148,17 +148,28 @@ httpreq.o = function (p)
 
 httpreq.o.prototype._set_prms = function (p_in)
 {
-	var p, ret, vals;
+	var p, otype, vals;
 
 	vals = [httpreq.p];
 	if (p_in.form != null) {
 		if (p_in.data != null)
 			throw("httpreq: form & data can't be set together");
-		vals.push({
-			method: p_in.form.method,
-			uri: p_in.form.action,
-			enctype: p_in.form.enctype,
-			data: p_in.form});
+		otype = Object.prototype.toString.call(p_in.form);
+		switch (otype) {
+		case "[object HTMLFormElement]":
+			vals.push({
+				method: p_in.form.method,
+				uri: p_in.form.action,
+				enctype: p_in.form.enctype,
+				data: p_in.form});
+			break;
+		case "[object FormData]":
+			vals.push({
+				method: "POST",
+				enctype: "multipart/form-data",
+				data: p_in.form});
+			break;
+		}
 	}
 	vals.push(p_in);
 	this.__set_prms(this.p, vals);
@@ -524,10 +535,12 @@ httpreq.o.prototype._fmt_data = function (data, enctype)
 	switch (otype) {
 		case "[object HTMLFormElement]":
 			return this._fmt_data_form(data, funs);
+		case "[object FormData]":
+			return this._fmt_data_formdata(data, funs);
 		case "[object Object]":
 			return this._fmt_data_obj(data, funs);
 		default:
-			/* If data is Blob, FormData, ArrayBufferView and etc */
+			/* If data is Blob, ArrayBufferView and etc */
 			return data;
 	}
 }
@@ -547,6 +560,17 @@ httpreq.o.prototype._fmt_data_form = function (data, funs)
 
 	for(i = 0; i < data.length; i++)
 		prms.push(funs.p.call(this, data[i].name, data[i].value));
+
+	return funs.p_join.call(this, prms);
+}
+
+httpreq.o.prototype._fmt_data_formdata = function (data, funs)
+{
+	var p, prms = [];
+
+
+	for(p of data.entries())
+		prms.push(funs.p.call(this, p[0], p[1]));
 
 	return funs.p_join.call(this, prms);
 }
