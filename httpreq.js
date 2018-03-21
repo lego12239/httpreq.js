@@ -545,6 +545,9 @@ httpreq.o.prototype._fmt_data_form = function (data, funs)
 {
 	var i, prms = [];
 
+	if (funs.data != null)
+		return funs.data.call(this, data);
+	
 	for(i = 0; i < data.length; i++)
 		prms.push(funs.p.call(this, data[i].name, data[i].value));
 
@@ -555,6 +558,9 @@ httpreq.o.prototype._fmt_data_formdata = function (data, funs)
 {
 	var p, prms = [];
 
+	if (funs.data != null)
+		return funs.data.call(this, data);
+	
 	for(p of data.entries())
 		prms.push(funs.p.call(this, p[0], p[1]));
 
@@ -565,6 +571,9 @@ httpreq.o.prototype._fmt_data_obj = function (data, funs)
 {
 	var i, prms = [];
 
+	if (funs.data != null)
+		return funs.data.call(this, data);
+	
 	for(i in data)
 		if ( Array.isArray(data[i]) ) {
 			for(j = 0; j < data[i].length; j++)
