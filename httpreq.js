@@ -124,7 +124,6 @@ httpreq.o = function (p)
 					 d: 0,
 					 d_total: 0};
 
-
 	this._set_prms(p);
 	this._set_headers(p.headers);
 
@@ -222,7 +221,6 @@ httpreq.o.prototype._check_misspelled = function (p_in, p_ex, parent)
 {
 	var p, ret;
 
-
 	if ( p_in == undefined )
 		p_in = {};
 
@@ -240,7 +238,6 @@ httpreq.o.prototype._set_headers = function (headers)
 {
 	var n;
 
-
 	for(n in headers)
 		this.p.headers[n] = headers[n];
 }
@@ -248,7 +245,6 @@ httpreq.o.prototype._set_headers = function (headers)
 httpreq.o.prototype.u_onabort = function (ev)
 {
 	this._dbg_out("u_onabort()", ev);
-
 
 	if ( this.p.cb.u_onabort != undefined )
 		this.p.cb.u_onabort(ev);
@@ -312,7 +308,6 @@ httpreq.o.prototype.onabort = function (ev)
 {
 	this._dbg_out("onabort()", ev);
 
-
 	if ( this.p.cb.onabort != undefined ) {
 		this.p.cb.onabort(ev);
 		return;
@@ -337,7 +332,6 @@ httpreq.o.prototype.onerror = function (ev)
 httpreq.o.prototype.onload = function (ev)
 {
 	var data;
-
 
 	this._dbg_out("onload()", ev);
 
@@ -402,7 +396,6 @@ httpreq.o.prototype.onok = function ()
 {
 	var data;
 
-
 	if ( this.p.cb._onok == undefined )
 		return;
 
@@ -418,7 +411,6 @@ httpreq.o.prototype.onnotok = function ()
 	   So in this case we need everywhere an Error object for errors */
 	var err = new Error();
 	var data;
-
 
 	err.code = this.r.status;
 	err.name = this.r.statusText;
@@ -446,7 +438,6 @@ httpreq.o.prototype.onfail = function (err_name, err_msg_args)
 	   So in this case we need everywhere an Error object for errors */
 	var err = new Error();
 
-
 	err.name = "httpreq." + err_name;
 	if ( httpreq.err_msg[err_name] == undefined )
 		throw("httpreq: error message is not defined for the error: " +
@@ -465,7 +456,6 @@ httpreq.o.prototype.go = function (data)
 {
 	var reqprms;
 
-
 	if ( data == undefined )
 		data = this.p.data;
 
@@ -480,7 +470,6 @@ httpreq.o.prototype.go = function (data)
 httpreq.o.prototype._send_data_in_uri = function (data)
 {
 	var data_to_send, uri = this.p.uri;
-
 
 	data_to_send = this._fmt_data(data, "application/x-www-form-urlencoded");
 	if ( data_to_send != "" )
@@ -505,7 +494,6 @@ httpreq.o.prototype._send_data_in_uri = function (data)
 httpreq.o.prototype._send_data_as_payload = function (data)
 {
 	var data_to_send;
-
 
 	data_to_send = this._fmt_data(data, this.p.enctype);
 
@@ -557,7 +545,6 @@ httpreq.o.prototype._fmt_data_form = function (data, funs)
 {
 	var i, prms = [];
 
-
 	for(i = 0; i < data.length; i++)
 		prms.push(funs.p.call(this, data[i].name, data[i].value));
 
@@ -568,7 +555,6 @@ httpreq.o.prototype._fmt_data_formdata = function (data, funs)
 {
 	var p, prms = [];
 
-
 	for(p of data.entries())
 		prms.push(funs.p.call(this, p[0], p[1]));
 
@@ -578,7 +564,6 @@ httpreq.o.prototype._fmt_data_formdata = function (data, funs)
 httpreq.o.prototype._fmt_data_obj = function (data, funs)
 {
 	var i, prms = [];
-
 
 	for(i in data)
 		if ( Array.isArray(data[i]) ) {
@@ -625,7 +610,6 @@ httpreq.o.prototype.__fmt_prms_multipart = function (prms)
 {
 	var boundary, res = "";
 
-
 	boundary = this.__mk_multipart_boundary(prms);
 	res = "--" + boundary + "\r\n";
 	res += prms.join("--" + boundary + "\r\n");
@@ -646,7 +630,6 @@ httpreq.o.prototype._set_r_headers = function ()
 {
 	var n;
 
-
 	for(n in this.p.headers)
 		this.r.setRequestHeader(n, this.p.headers[n]);
 }
@@ -654,7 +637,6 @@ httpreq.o.prototype._set_r_headers = function ()
 httpreq.o.prototype._dbg_out = function (msg, ev)
 {
 	var str = "httpreq:";
-
 
 	if ( ! this.p.debug )
 		return;
@@ -679,7 +661,6 @@ httpreq.error_toString = function ()
 	var msg;
 	var msg_args = this.msg_args;
 	var i = -1;
-	
 	
 	msg = this.message.replace(/%s/g, function (m) { return msg_args[++i]; });
 
