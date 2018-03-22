@@ -45,6 +45,9 @@ headers
   object with http headers name/value pairs
 enctype
   encoding type for request(supported types can be found at the source bottom)
+  use "_formData_" to send formData object as is,without spliting it
+  into parameters and then composing from it a request(that is, formData
+  is sent as multipart/form via POST).
 data
   object with request data
   For GET, HEAD and DELETE methods data is placed in uri in

@@ -635,6 +635,11 @@ httpreq.o.prototype.__mk_multipart_boundary = function (prms)
 	return "---------------------------" + Date.now().toString(16);
 }
 
+httpreq.o.prototype.__fmt_data_formdata = function (data)
+{
+	return data;
+}
+
 httpreq.o.prototype._set_r_headers = function ()
 {
 	var n;
@@ -695,6 +700,8 @@ httpreq.o.prototype.fmt_funs = {
 		p_join: httpreq.o.prototype.__fmt_prms_multipart },
 	"text/plain": {
 		p: httpreq.o.prototype.__fmt_prm_plain,
-		p_join: httpreq.o.prototype.__fmt_prms_plain }
+		p_join: httpreq.o.prototype.__fmt_prms_plain },
+	"_formData_": {
+		data: httpreq.o.prototype.__fmt_data_formdata}
 };
 
