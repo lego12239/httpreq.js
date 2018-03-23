@@ -640,6 +640,37 @@ httpreq.o.prototype.__fmt_data_formdata = function (data)
 	return data;
 }
 
+httpreq.o.prototype.__fmt_data_json = function (data)
+{
+	var otype, d = {}, i;
+	
+	otype = Object.prototype.toString.call(data);
+	switch (otype) {
+		case "[object HTMLFormElement]":
+			for(i = 0; i < data.length; i++)
+				if (d.hasOwnProperty(data[i].name)) {
+					if (!Array.isArray(d[data[i].name]))
+						d[data[i].name] = [d[data[i].name]];
+					d[data[i].name].push(data[i].value);
+				} else {
+					d[data[i].name] = data[i].value;
+				}
+			return JSON.stringify(d);
+		case "[object FormData]":
+			for(i of data.entries())
+				if (d.hasOwnProperty(i[0])) {
+					if (!Array.isArray(d[i[0]]))
+						d[i[0]] = [d[i[0]]];
+					d[i[0]].push(i[1]);
+				} else {
+					d[i[0]] = i[1];
+				}
+			return JSON.stringify(d);
+		default:
+			return JSON.stringify(data);
+	}
+}
+
 httpreq.o.prototype._set_r_headers = function ()
 {
 	var n;
@@ -702,6 +733,8 @@ httpreq.o.prototype.fmt_funs = {
 		p: httpreq.o.prototype.__fmt_prm_plain,
 		p_join: httpreq.o.prototype.__fmt_prms_plain },
 	"_formData_": {
-		data: httpreq.o.prototype.__fmt_data_formdata}
+		data: httpreq.o.prototype.__fmt_data_formdata},
+	"application/json": {
+		data: httpreq.o.prototype.__fmt_data_json}
 };
 

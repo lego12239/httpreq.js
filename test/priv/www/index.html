@@ -736,6 +736,21 @@
 			enctype: "_formData_",
 			fun: test_prms_formdata},
 		{
+			id: "unit112",
+			title: "Test POST application/json 1",
+			uri: '/test/post_prms_json',
+			fun: test_prms_json1},
+		{
+			id: "unit113",
+			title: "Test POST application/json 2",
+			uri: '/test/post_prms_json',
+			fun: test_prms_json2},
+		{
+			id: "unit114",
+			title: "Test POST application/json 2",
+			uri: '/test/post_prms_json',
+			fun: test_prms_json3},
+		{
 			id: "unit9999",
 			title: "Just wait a minute(we must collect fails if any)",
 			method: '',
@@ -2568,6 +2583,42 @@
 			form: new FormData(document.getElementById("form1")),
 			data: test.data,
 			enctype: test.enctype,
+			cb: {
+				_onok: report_ok.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
+	}
+	function test_prms_json1(test)
+	{
+		httpreq({
+			method: "POST",
+			uri: test.uri,
+			data: document.getElementById("form1"),
+			enctype: "application/json",
+			cb: {
+				_onok: report_ok.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
+	}
+	function test_prms_json2(test)
+	{
+		httpreq({
+			method: "POST",
+			uri: test.uri,
+			data: new FormData(document.getElementById("form1")),
+			enctype: "application/json",
+			cb: {
+				_onok: report_ok.bind(this, test),
+				_onnotok: report_fail.bind(this, test),
+				_onfail: report_fail.bind(this, test)}});
+	}
+	function test_prms_json3(test)
+	{
+		httpreq({
+			method: "POST",
+			uri: test.uri,
+			data: {p1: "val1?=&", p2: ["val2?=&#/q", "extraval2&"]},
+			enctype: "application/json",
 			cb: {
 				_onok: report_ok.bind(this, test),
 				_onnotok: report_fail.bind(this, test),

@@ -59,6 +59,8 @@ loop(Req, DocRoot) ->
         		test_web_test:post_prms3(Req);
         	{"test/post_prms4", 'POST'} ->
         		test_web_test:post_prms4(Req);
+        	{"test/post_prms_json", 'POST'} ->
+        		test_web_test:post_prms_json(Req);
         	{"test/get_timeout", 'GET'} ->
         		test_web_test:get_timeout(Req);
         	{"test/get_timeout/0", 'GET'} ->

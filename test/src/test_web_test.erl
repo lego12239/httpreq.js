@@ -1,7 +1,7 @@
 -module(test_web_test).
 -export([get/1, head/1, post/1, put/1, delete/1, get_prms1/1, get_prms2/1,
   get_prms3/1, post_prms1/1, post_prms2/1, post_prms3/1, post_prms4/1,
-  get_err/1, head_err/1,
+  post_prms_json/1, get_err/1, head_err/1,
   post_err/1, put_err/1, delete_err/1, get_timeout/1, head_timeout/1,
   post_timeout/1, put_timeout/1, delete_timeout/1]).
 
@@ -116,6 +116,23 @@ post_prms4_(Req, "val1?=&", L) when is_list(L) ->
 			Req:respond({"400 prms_err", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "wrong parameters"})
 	end;
 post_prms4_(Req, _, _) ->
+	Req:respond({"400 prms_err", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "wrong parameters"}).
+
+post_prms_json(Req) ->
+	Body = Req:recv_body(),
+	{struct, Json} = mochijson2:decode(Body),
+	post_prms_json_(Req, lists:sort(Json)).
+
+post_prms_json_(Req, [{<<"p1">>, <<"val1?=&">>},{<<"p2">>, L}])
+when is_list(L) ->
+	L1 = lists:sort(L),
+	case L1 of
+		[<<"extraval2&">>, <<"val2?=&#/q">>] ->
+			Req:respond({"200 ok", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "ok"});
+		_ ->
+			Req:respond({"400 prms_err", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "wrong parameters"})
+	end;
+post_prms_json_(Req, _) ->
 	Req:respond({"400 prms_err", [{"Content-Type", "text/plain"}, {"Cache-Control", "no-cache"}, {"Expires", "01 Dec 1980 00:00:00 +0400"}], "wrong parameters"}).
 
 get_err(Req) ->
