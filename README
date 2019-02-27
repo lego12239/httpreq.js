@@ -98,7 +98,7 @@ cb._onnotok
 cb._onfail
   a callback for request fail
   This callback is called if a request is failed(due to client-side abort or
-  error; or timeout)
+  error; or timeout; or in case of onok callback exception)
   The callback get Error object as first argument.
 debug
   debug level(now support only 2 values: 0 or 1)

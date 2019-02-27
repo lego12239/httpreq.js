@@ -89,7 +89,8 @@ httpreq.err_msg = {
 	"status_err": "Got bad status %s %s %s",
 	"readyState_err": "%s",
 	"timeout": "Download timeout reached",
-	"enctype_err": "Unknown encoding type %s"
+	"enctype_err": "Unknown encoding type %s",
+	"onok_cb_err": "%s:%s : %s"
 };
 
 httpreq.req_done = function (rpacks, i, j)
@@ -394,14 +395,20 @@ httpreq.o.prototype.onloadend = function (ev)
 
 httpreq.o.prototype.onok = function ()
 {
-	var data;
+	var data, ret;
 
 	if ( this.p.cb._onok == undefined )
 		return;
 
 	data = this.f.json ? JSON.parse(this.r.responseText) : this.r.response;
 
-	return this.p.cb._onok(data);
+	try {
+		ret = this.p.cb._onok(data);
+	} catch (e) {
+		this.onfail("onok_cb_err", [e.fileName, e.lineNumber, e.message]);
+		ret = false;
+	}
+	return ret;
 }
 
 httpreq.o.prototype.onnotok = function ()
