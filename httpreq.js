@@ -429,6 +429,8 @@ httpreq.o.prototype.onnotok = function ()
 
 	if ( this.p.cb._onnotok != undefined )
 		this.p.cb._onnotok(err);
+	else (this.p.cb._onfail != undefined)
+		this.p.cb._onfail(err);
 }
 
 httpreq.o.prototype.onfail = function (err_name, err_msg_args)

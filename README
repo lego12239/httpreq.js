@@ -93,6 +93,8 @@ cb._onnotok
   This callback is called if a response is received and response status code
   is not satisfied ok_rex regexp.
   The callback get Error object as first argument.
+  If this callback isn't defined, but _onfail callback is exist, then _onfail
+  will be called.
 cb._onfail
   a callback for request fail
   This callback is called if a request is failed(due to client-side abort or
