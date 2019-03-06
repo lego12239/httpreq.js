@@ -436,7 +436,7 @@ httpreq.o.prototype.onnotok = function ()
 
 	if ( this.p.cb._onnotok != undefined )
 		this.p.cb._onnotok(err);
-	else (this.p.cb._onfail != undefined)
+	else if (this.p.cb._onfail != undefined)
 		this.p.cb._onfail(err);
 }
 
