@@ -226,7 +226,7 @@ httpreq.o.prototype._check_misspelled = function (p_in, p_ex, parent)
 		p_in = {};
 
 	for(p in p_in) {
-		if (p == "data")
+		if ((p == "data") || (p == "headers"))
 			continue;
 		if (!p_ex.hasOwnProperty(p))
 			throw("httpreq: unknown parameter name '" + parent + p + "'");
