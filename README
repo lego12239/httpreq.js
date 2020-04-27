@@ -127,6 +127,10 @@ application always wait a json format):
 
 Now, our httpreq() call has parameters specific only for current request.
 
+
+Requests sequence
+=================
+
 If we need to make a one request come after another one, then we can
 use the next syntax:
 
